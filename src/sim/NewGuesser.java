@@ -12,17 +12,17 @@ public class NewGuesser extends Agent {
     public static final double STEP_SIZE = 0.01;
     public static final double OUTCOME_MULTIPLIER = 3000.0;
 
+    public void setStaticVars() {
+        NEURAL_LAYERS = 3;
+        NEURONS_PER_LAYER = 5;
+    }
 
     public NewGuesser() throws EvolvingNeuralNet.NotEnoughLayersException {
         super();
-        NEURAL_LAYERS = 4;
-        NEURONS_PER_LAYER = 5;
     }
 
     public NewGuesser(Agent parent1, Agent parent2) throws EvolvingNeuralNet.NotEnoughLayersException {
         super(parent1, parent2);
-        NEURAL_LAYERS = 4;
-        NEURONS_PER_LAYER = 5;
     }
 
     @Override

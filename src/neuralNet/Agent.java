@@ -12,12 +12,19 @@ public abstract class Agent {
     public static int NEURAL_LAYERS = 3;
     public static int NEURONS_PER_LAYER = 5;
     public static int OUTCOME_MULTIPLIER = 1;
+    public static boolean staticSet = false;
+
+    public abstract void setStaticVars();
 
     public Agent() throws EvolvingNeuralNet.NotEnoughLayersException {
         this(null, null);
     }
 
     public Agent(Agent parent1, Agent parent2) throws EvolvingNeuralNet.NotEnoughLayersException {
+        if (!staticSet) {
+            setStaticVars();
+            staticSet = true;
+        }
         if (parent1 == null || parent2 == null) {
             neuralNet = new EvolvingNeuralNet(NEURAL_INPUTS, NEURONS_PER_LAYER, NEURAL_LAYERS, NEURAL_OUTPUTS, null, null);
         } else {
