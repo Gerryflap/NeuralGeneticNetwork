@@ -1,5 +1,6 @@
 package visual;
 
+import neuralNet.Agent;
 import neuralNet.EvolvingNeuralNet;
 import neuralNet.Util;
 import sim.Example;
@@ -11,10 +12,22 @@ import java.awt.*;
  * Created by gerben on 27-11-15.
  */
 public class GraphPanel extends JPanel {
-    EvolvingNeuralNet net;
+    Agent agent;
+    EvolvingNeuralNet neuralNet;
+    FormulaContainer f;
 
-    public void setNet(EvolvingNeuralNet net) {
-        this.net = net;
+    public void setFormula(FormulaContainer f){
+        this.f = f;
+    }
+    public void setAgent(Agent agent) {
+        this.agent = agent;
+        this.invalidate();
+        this.setVisible(false);
+        this.setVisible(true);
+    }
+
+    public void setNeuralNet(EvolvingNeuralNet net) {
+        this.neuralNet = net;
         this.invalidate();
         this.setVisible(false);
         this.setVisible(true);
@@ -23,8 +36,8 @@ public class GraphPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if(net != null) {
-            EvolvingNeuralNet net_ = net;
+        if((agent != null || neuralNet != null) && f != null) {
+            Agent agent_ = agent;
             g.setColor(new Color(255,255,255));
             int w = getWidth();
             int h = getHeight();
@@ -34,9 +47,13 @@ public class GraphPanel extends JPanel {
             int[] ygs = new int[w];
             for (int x = 0; x < w; x++) {
                 xs[x] = x;
-                ygs[x] = (int) Example.f(scaleTranform(x, 20, w/2));
+                ygs[x] = (int) f.f(scaleTranform(x, w, 0));
                 try {
-                    ys[x] = (int) (100.0 * net_.process(new double[]{scaleTranform(x, 20, w/2)})[0]);
+                    if (agent_ != null) {
+                        ys[x] = (int) (agent_.process(scaleTranform(x, w, 0))[0]);
+                    } else {
+                        ys[x] = (int) (1000.0 * neuralNet.process(new double[]{scaleTranform(x, w, 0)})[0]);
+                    }
                 } catch (Util.DimensionMismatchException e) {
                     e.printStackTrace();
                 }

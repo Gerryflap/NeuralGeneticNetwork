@@ -63,7 +63,7 @@ public class EvolvingNeuralNet {
 
     public void mutate(double chance) {
 
-        //I too like to live dangerously...
+        //I too  like to live dangerously...
         while(random.nextDouble() < chance) {
             int layer = random.nextInt(nLayers);
             int dot = random.nextInt(neuralNetwork[layer].length);
@@ -83,7 +83,7 @@ public class EvolvingNeuralNet {
             for (int dot = 0; dot < neuralNetwork[layer].length; dot++) {
                 next = Util.add(next, Util.multiply(in[dot], neuralNetwork[layer][dot]));
             }
-            in = Util.tanh(next);
+            in = Util.sig(next);
 
         }
         return in;

@@ -17,14 +17,14 @@ public class Guesser {
     public Guesser(Guesser p1, Guesser p2) {
         try {
             if (p1 == null || p2 == null) {
-                neuralNet = new EvolvingNeuralNet(1, 10, 3, 1,null,null);
+                neuralNet = new EvolvingNeuralNet(1, 5, 3, 1,null,null);
             } else {
-                neuralNet = new EvolvingNeuralNet(1, 10, 3, 1, p1.getNN(), p2.getNN());
+                neuralNet = new EvolvingNeuralNet(1, 5, 3, 1, p1.getNN(), p2.getNN());
             }
         } catch (EvolvingNeuralNet.NotEnoughLayersException e) {
             e.printStackTrace();
         }
-        neuralNet.mutate(0.6);
+        neuralNet.mutate(0.7);
     }
 
     public Guesser() {
@@ -35,13 +35,13 @@ public class Guesser {
         try {
             double errorMean = 0;
             for (int i = 0; i < 100; i++) {
-                double x = (2.0 * random.nextDouble() - 1.0) * 10.0;
-                double ourAnswer = 100.0*neuralNet.process(new double[]{x})[0];
+                double x = (double) (i - 50)/10.0;
+                double ourAnswer = 1000.0*neuralNet.process(new double[]{x})[0];
                 double correctAnswer = Example.f(x);
-                errorMean += Math.abs(ourAnswer - correctAnswer);
+                errorMean += 1 - Util.sig(Math.pow(ourAnswer - correctAnswer, 2));
             }
-            errorMean/=10.0;
-            return 1 - (Util.tanh(errorMean/100.0));
+            errorMean/=100.0;
+            return errorMean;
         } catch (Util.DimensionMismatchException e) {
             e.printStackTrace();
         }

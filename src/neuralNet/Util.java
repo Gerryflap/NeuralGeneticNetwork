@@ -32,16 +32,16 @@ public class Util {
         return random.nextBoolean();
     }
 
-    public static double[] tanh(double[] array) {
+    public static double[] sig(double[] array) {
         double[] out = new double[array.length];
         for (int i = 0; i < array.length; i++) {
-            out[i] = Util.tanh(array[i]);
+            out[i] = Util.sig(array[i]);
         }
         return out;
     }
 
-    public static double tanh(double x) {
-        return Math.tanh(x)/2 + 0.5;
+    public static double sig(double x) {
+        return 1.0/(1.0+Math.exp(-x));
     }
 
     public static double arctanh(double x) {

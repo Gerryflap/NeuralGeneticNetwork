@@ -1,7 +1,7 @@
 package sim;
 
-import neuralNet.EvolvingNeuralNet;
 import neuralNet.Util;
+import visual.FormulaContainer;
 import visual.GraphViewer;
 
 import java.util.ArrayList;
@@ -10,18 +10,20 @@ import java.util.List;
 /**
  * Created by gerben on 26-11-15.
  */
-public class Example {
+public class Example implements FormulaContainer {
     private int population;
     private List<Guesser> world;
 
 
     public static void main(String[] args) {
         GraphViewer graphViewer = new GraphViewer();
+
         graphViewer.setVisible(true);
         Example example = new Example(40);
+        graphViewer.getGraphPanel().setFormula(example);
         for (int i = 0; i < 1000000; i++) {
             example.generate();
-            graphViewer.getGraphPanel().setNet(example.getBestGuesser().getNN());
+            graphViewer.getGraphPanel().setNeuralNet(example.getBestGuesser().getNN());
         }
 
         System.out.println(example.getWorld().get(0).getChanceOfSurvival());
@@ -67,10 +69,22 @@ public class Example {
                 }
             }
         }
+        double maxChance = 0;
+        double minChance = 1;
+
+        for (int i = 0; i < world.size(); i++) {
+            if (world.get(i).getChanceOfSurvival() > maxChance) {
+                maxChance = world.get(i).getChanceOfSurvival();
+            } else if (world.get(i).getChanceOfSurvival() < minChance) {
+                minChance = world.get(i).getChanceOfSurvival();
+            }
+        }
+
+        double a = 0.1/(maxChance - minChance);
 
         for (int i = 0; i < world.size(); i++) {
             if (!selected.contains(world.get(i))) {
-                if (Guesser.random.nextDouble() < world.get(i).getChanceOfSurvival()) {
+                if (Guesser.random.nextDouble() <  (a + 0.9) * world.get(i).getChanceOfSurvival()) {
                     selected.add(world.get(i));
                 }
             }
