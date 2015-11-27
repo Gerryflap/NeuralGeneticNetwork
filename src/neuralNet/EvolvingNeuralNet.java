@@ -30,9 +30,9 @@ public class EvolvingNeuralNet {
         //Initialize the Dots
         for (int i = 0; i < nLayers; i++) {
             if (i == 0) {
-                neuralNetwork[i] = new double[nInputs][];
+                neuralNetwork[i] = new double[nInputs + 1][];
             } else {
-                neuralNetwork[i] = new double[neuronsPerLayer][];
+                neuralNetwork[i] = new double[neuronsPerLayer + 1][];
             }
         }
 
@@ -75,6 +75,10 @@ public class EvolvingNeuralNet {
     public double[] process(double[] in) throws Util.DimensionMismatchException {
         double[] next = null;
         for (int layer = 0; layer < nLayers; layer++) {
+            double[] in_ = new double[in.length + 1];
+            System.arraycopy(in, 0, in_, 0, in.length);
+            in_[in.length] = 1.0;
+            in = in_;
             next = new double[neuralNetwork[layer][0].length];
             for (int dot = 0; dot < neuralNetwork[layer].length; dot++) {
                 next = Util.add(next, Util.multiply(in[dot], neuralNetwork[layer][dot]));
@@ -82,7 +86,7 @@ public class EvolvingNeuralNet {
             in = Util.tanh(next);
 
         }
-        return next;
+        return in;
     }
 
     public double getMultiplier(int layer, int dot, int connection) {

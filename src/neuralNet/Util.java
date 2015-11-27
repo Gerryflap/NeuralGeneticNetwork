@@ -7,7 +7,7 @@ import java.util.Random;
  */
 public class Util {
 
-    private static Random random = new Random();
+    public static Random random = new Random();
 
     public static double[] multiply(double f, double[] array) {
         double[] out = new double[array.length];

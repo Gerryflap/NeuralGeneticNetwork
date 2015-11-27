@@ -2,6 +2,7 @@ package sim;
 
 import neuralNet.EvolvingNeuralNet;
 import neuralNet.Util;
+import visual.GraphViewer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +16,12 @@ public class Example {
 
 
     public static void main(String[] args) {
-        Example example = new Example(4);
+        GraphViewer graphViewer = new GraphViewer();
+        graphViewer.setVisible(true);
+        Example example = new Example(40);
         for (int i = 0; i < 1000000; i++) {
             example.generate();
+            graphViewer.getGraphPanel().setNet(example.getBestGuesser().getNN());
         }
 
         System.out.println(example.getWorld().get(0).getChanceOfSurvival());
@@ -29,7 +33,7 @@ public class Example {
 
     public Example(int population) {
         this.population = population;
-        world = new ArrayList<>();
+        world = new ArrayList<Guesser>();
         for (int i = 0; i < population; i++) {
             world.add(new Guesser());
         }
@@ -37,8 +41,8 @@ public class Example {
     }
 
     public void generate() {
-        List<Guesser> selected = new ArrayList<>();
-        List<Guesser> nextWorld = new ArrayList<>();
+        List<Guesser> selected = new ArrayList<Guesser>();
+        List<Guesser> nextWorld = new ArrayList<Guesser>();
 
         for (int i = 0; i < world.size(); i++) {
             if(selected.size() < 2){
@@ -74,8 +78,8 @@ public class Example {
         }
 
         for (int i = 0; i < population; i++) {
-            Guesser p1 = selected.get(0);
-            Guesser p2 = selected.get(1);
+            Guesser p1 = selected.get(Util.random.nextInt(selected.size()));
+            Guesser p2 = selected.get(Util.random.nextInt(selected.size()));
             nextWorld.add(new Guesser(p1, p2));
         }
         //System.out.println(world);
@@ -89,11 +93,22 @@ public class Example {
     public String test(double x) {
         try {
             double out = world.get(0).getNN().process(new double[] {x})[0];
-            return "Expected outcome: " + f(x) +", our outcome: " + out;
+            return "Expected outcome: " + f(x) +", our outcome: " + 100.0 * out;
         } catch (Util.DimensionMismatchException e) {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public Guesser getBestGuesser(){
+        Guesser bestGuesser = null;
+        for (int i = 0; i < world.size(); i++) {
+            if(bestGuesser == null || world.get(i).getChanceOfSurvival() > bestGuesser.getChanceOfSurvival()) {
+                bestGuesser = world.get(i);
+            }
+
+        }
+        return bestGuesser;
     }
 
     public List<Guesser> getWorld() {
