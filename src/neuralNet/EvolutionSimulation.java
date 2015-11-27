@@ -110,4 +110,8 @@ public abstract class EvolutionSimulation {
         }
         return bestAgent;
     }
+
+    public List<Agent> getAgents() {
+        return agents;
+    }
 }
