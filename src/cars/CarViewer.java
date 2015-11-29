@@ -4,17 +4,29 @@ import neuralNet.Agent;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 /**
  * Created by gerben on 27-11-15.
  */
-public class CarViewer extends JFrame {
+public class CarViewer extends JFrame implements ItemListener {
     CarPanel carPanel;
+    JToggleButton radioButton;
+    JPanel jPanel;
+    private boolean shouldSleep = false;
 
     public CarViewer(CarEvolutionSimulator simulator) {
         super();
+        jPanel = new JPanel();
         carPanel = new CarPanel(simulator);
+        radioButton = new JToggleButton("Superspeed?");
+
         this.setContentPane(carPanel);
+        //carPanel.add(carPanel);
+        radioButton.addItemListener(this);
+        carPanel.add(radioButton);
+        carPanel.setSize(500,500);
         // be nice to testers..
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         pack();
@@ -30,6 +42,21 @@ public class CarViewer extends JFrame {
     public void update(){
         carPanel.update();
     }
+
+    public boolean shouldSleep() {
+        return shouldSleep;
+    }
+
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+        if (e.getStateChange() == ItemEvent.SELECTED) {
+            shouldSleep = true;
+        } else if (e.getStateChange() == ItemEvent.DESELECTED) {
+            shouldSleep = false;
+        }
+
+    }
+
     public class CarPanel extends JPanel {
         CarEvolutionSimulator simulator;
 

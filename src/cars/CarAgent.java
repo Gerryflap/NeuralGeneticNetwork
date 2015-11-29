@@ -31,11 +31,11 @@ public class CarAgent extends Agent {
         NEURAL_INPUTS = 4;
 
         NEURAL_LAYERS = 3;
-        NEURONS_PER_LAYER = 5;
+        NEURONS_PER_LAYER = 15;
         //speed and delta angle
         NEURAL_OUTPUTS = 2;
 
-        MUTATION_CHANCE = 0.5;
+        MUTATION_CHANCE = 0.99;
     }
 
     @Override
@@ -46,19 +46,23 @@ public class CarAgent extends Agent {
     public void drive(double... ranges) {
         try {
             double[] output = process(ranges);
-            speed += (2*output[0]-1)*0.01;
-            rotation = (rotation + (2*output[1] -1) * 0.003);
+            speed = (output[0]);//*0.01;
+            rotation = (rotation + (2*output[1] -1) * 0.003 /(speed<0.1?0.1:speed));
             x += Math.cos(rotation) * speed;
             y += Math.sin(rotation) * speed;
 
-
+            damage -= 0.1 * speed;
         } catch (Util.DimensionMismatchException e) {
             e.printStackTrace();
         }
     }
 
     public void collide() {
-        damage += 1;
+        if (damage == 0) {
+            damage += 100;
+        } else {
+            damage += 1;
+        }
     }
 
     public double getX() {
