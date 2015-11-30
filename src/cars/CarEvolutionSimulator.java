@@ -24,21 +24,25 @@ public class CarEvolutionSimulator extends EvolutionSimulation{
 
     public void step() throws EvolvingNeuralNet.NotEnoughLayersException {
         i += 1;
+        List<double[]> allRanges = new ArrayList<double[]>();
         if (i > 3000) {
             i = 0;
             iterate();
+            placeAgentsInGrid();
         }
         for (Agent agent: agents) {
             CarAgent carAgent = (CarAgent) agent;
+            carAgent.resestHasCollided();
             double[] ranges = new double[4];
-            ranges[0] = getDistanceToCollision(carAgent.getRotation() - 1, carAgent.getX(), carAgent.getY());
-            ranges[1] = getDistanceToCollision(carAgent.getRotation(), carAgent.getX(), carAgent.getY());
-            ranges[2] = getDistanceToCollision(carAgent.getRotation() + 1, carAgent.getX(), carAgent.getY());
-            ranges[3] = getDistanceToCollision(carAgent.getRotation() + Math.PI, carAgent.getX(), carAgent.getY());
-
+            double xOffset = Math.cos(carAgent.getRotation()) * 30;
+            double yOffset = Math.sin(carAgent.getRotation()) * 30;
+            ranges[0] = getDistanceToCollision(carAgent.getRotation() - 1, carAgent.getX() + xOffset, carAgent.getY() + yOffset);
+            ranges[1] = getDistanceToCollision(carAgent.getRotation(), carAgent.getX() + xOffset, carAgent.getY() + yOffset);
+            ranges[2] = getDistanceToCollision(carAgent.getRotation() + 1, carAgent.getX()+ xOffset, carAgent.getY()+ yOffset);
+            ranges[3] = getDistanceToCollision(carAgent.getRotation() + Math.PI, carAgent.getX() - xOffset, carAgent.getY() - yOffset);
             for (Agent agent1: agents) {
                 CarAgent carAgent1 = (CarAgent) agent1;
-                if (agent != agent1 && Math.pow(carAgent.getX() - carAgent1.getX(), 2) + Math.pow(carAgent.getY() - carAgent1.getY(), 2) < 30*30) {
+                if (agent != agent1 && Math.pow(carAgent.getX() - carAgent1.getX(), 2) + Math.pow(carAgent.getY() - carAgent1.getY(), 2) < 60*60) {
                     if (carAgent.getSpeed() > carAgent1.getSpeed()) {
                         carAgent.collide();
                     } else {
@@ -46,15 +50,19 @@ public class CarEvolutionSimulator extends EvolutionSimulation{
                     }
                 }
             }
-            if (carAgent.getSpeed() < 0.01) {
+            /**if (Math.abs(carAgent.getSpeed()) < 0.01) {
                 carAgent.collide();
-            }
+            }*/
             if (w<carAgent.getX() || carAgent.getX()<0) {
                 carAgent.collide();
             } else if (h<carAgent.getY() || carAgent.getY()<0) {
                 carAgent.collide();
             }
-            carAgent.drive(ranges);
+            allRanges.add(ranges);
+        }
+
+        for (int j = 0; j < agents.size(); j++) {
+            ((CarAgent) agents.get(j)).drive(allRanges.get(j));
         }
     }
 
@@ -68,7 +76,8 @@ public class CarEvolutionSimulator extends EvolutionSimulation{
     public List<Agent> generateAgents() throws EvolvingNeuralNet.NotEnoughLayersException {
         List<Agent> agents = new ArrayList<>();
         for (int i = 0; i < population; i++) {
-            agents.add(generateAgent());
+            CarAgent carAgent = (CarAgent) generateAgent();
+            agents.add(carAgent);
         }
         return agents;
     }
@@ -97,66 +106,77 @@ public class CarEvolutionSimulator extends EvolutionSimulation{
     }
 
     public double getDistanceToCollision(double rotation, double x, double y) {
-        double xStep;
-        double yStep;
-        double distLeft = -1;
-        double distRight = -1;
-        double distTop = -1;
-        double distBot = -1;
 
-        double sqrDist;
-        double minsSqrDist = (100 * 100);
+        double sqrDist = 0;
+        double minSqrDist = (30000 * 30000);
 
 
-        if (x > w || x < 0 || y > h || y < 0) {
+        if (x >= w || x <= 0 || y >= h || y <= 0) {
             return 0;
         }
 
         for(Agent agent : agents){
             CarAgent carAgent = (CarAgent) agent;
-            sqrDist = Math.pow(x - carAgent.getX(),2) + Math.pow(y - carAgent.getY(),2);
-            if (sqrDist < minsSqrDist && sqrDist != 0) {
-                double angle = Math.atan2(-(y - carAgent.getY()), -(x - carAgent.getX()));
-                if (Math.abs(rotation - angle) < 2*Math.atan(60*0.5/Math.pow(sqrDist, 0.5))) {
-                    minsSqrDist = sqrDist;
+            sqrDist = Math.pow(x - carAgent.getX(),2) + Math.pow(y - carAgent.getY(),2) - 30*30;
+            if (sqrDist < minSqrDist && sqrDist != 0) {
+                double angle = Math.atan2(-(y - carAgent.getY()),-(x - carAgent.getX()));
+                //System.out.printf("Delta rotation: %f, Allowed delta: %f\n",Math.abs(rotation - angle) , Math.atan(60.0*0.5/Math.pow(sqrDist, 0.5)));
+                if (Math.abs(rotation - angle) < Math.atan(60.0*0.5/Math.pow(sqrDist, 0.5))) {
+                    minSqrDist = sqrDist;
                 }
             }
         }
 
 
-
-        if ((xStep = Math.cos(rotation)) != 0 ) {
-            distLeft = x/xStep;
-            distRight = (w - x)/xStep;
-        }
-
-        if ((yStep = Math.sin(rotation)) != 0 ) {
-            distTop = y/yStep;
-            distBot = (h - y)/yStep;
-        }
-
         double distX = 0;
-        if (distLeft == -1) {
-            distX = distRight;
-        } else if (distRight == -1) {
-            distX = distLeft;
+        if (Math.cos(rotation) > 0) {
+            distX = (w - x);
         } else {
-            distX = distLeft>distRight?distRight:distLeft;
+            distX = x;
         }
 
         double distY = 0;
-        if (distTop < 0) {
-            distY = distBot;
-        } else if (distBot < 0) {
-            distY = distTop;
+
+        if (Math.sin(rotation) > 0) {
+            distY = (h - y);
         } else {
-            distY = distTop>distBot?distBot:distTop;
+            distY = y;
         }
 
-        return Math.min(
-                Math.min(Math.pow(Math.pow(distX, 2) + Math.pow(distY, 2), 0.5), 100)
-                , Math.pow(minsSqrDist, 0.5))/100.0;
 
+        double distWalls;
+        if (distX/Math.abs(Math.cos(rotation)) > distY/Math.abs(Math.sin(rotation))) {
+            distWalls = distY/Math.abs(Math.sin(rotation));
+        } else  {
+            distWalls = distX/Math.abs(Math.cos(rotation));
+        }
+
+
+        //System.out.println("X: "+ x);
+        //System.out.println("DistX: "+ distX + "distY: " + distY + "DistWalls: " + distWalls);
+
+        //System.out.println("dw: " +distWalls);
+        //System.out.println("do: "+ Math.sqrt(sqrDist));
+        //System.out.println("dchosen: " + Math.min(distWalls, Math.pow(minSqrDist, 0.5)));
+
+        if (distWalls > Math.sqrt(minSqrDist)) {
+            //System.out.println("Car detected! " + Math.sqrt(minSqrDist));
+        } else {
+            //System.out.println("Car too far away! " + Math.sqrt(minSqrDist));
+
+        }
+        return Math.min(distWalls
+                , Math.pow(minSqrDist, 0.5))/100.0;
+
+    }
+
+    public void placeAgentsInGrid() {
+        for (int i = 0; i < agents.size(); i++) {
+
+            CarAgent carAgent = (CarAgent) agents.get(i);
+            carAgent.setX(i * 100 % w);
+            carAgent.setY((i * 100 / w) * 100);
+        }
     }
 
 }

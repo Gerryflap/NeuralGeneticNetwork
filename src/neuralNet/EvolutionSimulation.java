@@ -1,5 +1,7 @@
 package neuralNet;
 
+import cars.CarAgent;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,11 +94,12 @@ public abstract class EvolutionSimulation {
 
     private List<Agent> breed(List<Agent> survivorList) throws EvolvingNeuralNet.NotEnoughLayersException {
         List<Agent> newAgents = new ArrayList<Agent>();
-        for (int i = 0; i < population; i++) {
+        for (int i = 0; i < population - 1; i++) {
             Agent p1 = survivorList.get(Util.random.nextInt(survivorList.size()));
             Agent p2 = survivorList.get(Util.random.nextInt(survivorList.size()));
             newAgents.add(generateAgent(p1, p2));
         }
+        newAgents.add(generateAgent());
         return newAgents;
     }
 

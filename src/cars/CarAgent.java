@@ -14,6 +14,8 @@ public class CarAgent extends Agent {
     private double y;
     private double rotation;
     private double speed = 0;
+    private boolean hasCollided = false;
+    private double[] ranges;
 
     public CarAgent(double x, double y) throws EvolvingNeuralNet.NotEnoughLayersException {
         this(x, y, null, null);
@@ -30,12 +32,14 @@ public class CarAgent extends Agent {
         //3 collision lines
         NEURAL_INPUTS = 4;
 
-        NEURAL_LAYERS = 3;
-        NEURONS_PER_LAYER = 15;
+        NEURAL_LAYERS = 5;
+        NEURONS_PER_LAYER = 25;
         //speed and delta angle
         NEURAL_OUTPUTS = 2;
 
-        MUTATION_CHANCE = 0.99;
+        MUTATION_CHANCE = 0.8;
+
+        MEMORY_NEURONS = 5;
     }
 
     @Override
@@ -46,18 +50,28 @@ public class CarAgent extends Agent {
     public void drive(double... ranges) {
         try {
             double[] output = process(ranges);
-            speed = (output[0]);//*0.01;
-            rotation = (rotation + (2*output[1] -1) * 0.003 /(speed<0.1?0.1:speed));
+            this.ranges = ranges;
+            double oldSpeed = speed;
+            speed += (2*output[0]-1)*0.01;
+            speed = Math.min(speed, 2);
+            speed = Math.max(speed, -0.3);
+            double oldRotation = rotation;
+            rotation = (rotation + (2*output[1] -1) * 0.003 /(speed<0.1?0.1:speed) + 2* Math.PI)%(2*Math.PI);
+            speed*= 0.99;
+
+
             x += Math.cos(rotation) * speed;
             y += Math.sin(rotation) * speed;
-
-            damage -= 0.1 * speed;
+            damage -= 1 * speed;
+            damage += Math.abs(oldSpeed - speed) < 0.1?1:0;
+            damage += Math.abs(oldRotation - rotation) < 0.1?1:0;
         } catch (Util.DimensionMismatchException e) {
             e.printStackTrace();
         }
     }
 
     public void collide() {
+        hasCollided = true;
         if (damage == 0) {
             damage += 100;
         } else {
@@ -95,5 +109,25 @@ public class CarAgent extends Agent {
 
     public double getSpeed() {
         return speed;
+    }
+
+    public boolean hasCollided(){
+        return hasCollided;
+    }
+
+    public void resestHasCollided() {
+        hasCollided = false;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public double[] getRanges() {
+        return ranges;
     }
 }

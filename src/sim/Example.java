@@ -100,7 +100,11 @@ public class Example implements FormulaContainer {
         world = nextWorld;
     }
 
-    public static double f(double x) {
+    public double f(double x) {
+        return fStat(x);
+    }
+
+    public static double fStat(double x) {
         return x*x;
     }
 

@@ -37,7 +37,7 @@ public class Guesser {
             for (int i = 0; i < 100; i++) {
                 double x = (double) (i - 50)/10.0;
                 double ourAnswer = 1000.0*neuralNet.process(new double[]{x})[0];
-                double correctAnswer = Example.f(x);
+                double correctAnswer = Example.fStat(x);
                 errorMean += 1 - Util.sig(Math.pow(ourAnswer - correctAnswer, 2));
             }
             errorMean/=100.0;

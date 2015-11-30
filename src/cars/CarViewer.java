@@ -71,8 +71,29 @@ public class CarViewer extends JFrame implements ItemListener {
             g.fillRect(0, 0, getWidth(), getHeight());
             for (Agent agent : simulator.getAgents()){
                 CarAgent carAgent = (CarAgent) agent;
-                g.setColor(new Color(255,0,0));
+                if (carAgent.hasCollided()) {
+                    g.setColor(new Color(255, 0, 0));
+                } else {
+                    g.setColor(new Color(0, 0, 255));
+
+                }
                 g.fillPolygon(carAgent.getXs(), carAgent.getYs(), 4);
+                g.setColor(Color.BLACK);
+
+                double x = carAgent.getX() + Math.cos(carAgent.getRotation()) * 30;
+                double y = carAgent.getY() + Math.sin(carAgent.getRotation()) * 30;
+                for (int i = 0; i < 3; i++) {
+                    g.drawLine((int) x,
+                            (int) y,
+                            (int) (x
+                                    + Math.cos(carAgent.getRotation() + i - 1)
+                                    * carAgent.getRanges()[i]*100),
+                            (int) (y
+                                    + Math.sin(carAgent.getRotation() + i - 1)
+                                    * carAgent.getRanges()[i]*100));
+
+                }
+
             }
 
 

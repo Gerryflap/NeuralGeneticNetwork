@@ -9,7 +9,7 @@ public class CarSim {
 
     public static void main(String[] args) {
         try {
-            CarEvolutionSimulator carEvolutionSimulator = new CarEvolutionSimulator(500, 500, 10);
+            CarEvolutionSimulator carEvolutionSimulator = new CarEvolutionSimulator(500, 500, 20);
             CarViewer carViewer = new CarViewer(carEvolutionSimulator);
             carViewer.setVisible(true);
 
