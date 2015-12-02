@@ -37,7 +37,7 @@ public class CarAgent extends Agent {
         //speed and delta angle
         NEURAL_OUTPUTS = 2;
 
-        MUTATION_CHANCE = 0.8;
+        MUTATION_CHANCE = 0.99;
 
         MEMORY_NEURONS = 5;
     }

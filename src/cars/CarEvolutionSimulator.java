@@ -33,7 +33,7 @@ public class CarEvolutionSimulator extends EvolutionSimulation{
         for (Agent agent: agents) {
             CarAgent carAgent = (CarAgent) agent;
             carAgent.resestHasCollided();
-            double[] ranges = new double[4];
+            double[] ranges = new double[5];
             double xOffset = Math.cos(carAgent.getRotation()) * 30;
             double yOffset = Math.sin(carAgent.getRotation()) * 30;
             ranges[0] = getDistanceToCollision(carAgent.getRotation() - 1, carAgent.getX() + xOffset, carAgent.getY() + yOffset);
@@ -58,6 +58,8 @@ public class CarEvolutionSimulator extends EvolutionSimulation{
             } else if (h<carAgent.getY() || carAgent.getY()<0) {
                 carAgent.collide();
             }
+            //ranges[4] = carAgent.getFitness();
+
             allRanges.add(ranges);
         }
 

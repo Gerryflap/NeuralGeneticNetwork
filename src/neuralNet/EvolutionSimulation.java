@@ -77,8 +77,8 @@ public abstract class EvolutionSimulation {
     }
     
     private void hunt(List<Agent> survivorList) {
-        double maxChance = 0;
-        double minChance = 1;
+        double maxChance = Integer.MIN_VALUE;
+        double minChance = Integer.MAX_VALUE;
         
         for (int i = 0; i < agents.size(); i++) {
             if (agents.get(i).getFitness() > maxChance) {
@@ -88,28 +88,30 @@ public abstract class EvolutionSimulation {
             }
         }
 
-        double a = 1.0/(maxChance - minChance);
+        double a = 1.5/(maxChance - minChance);
 
         for (int i = 0; i < agents.size(); i++) {
             if (!survivorList.contains(agents.get(i))) {
                 //System.out.println(a * (agents.get(i).getFitness() - minChance) + 0.1);
                 if (Util.random.nextDouble() <
-                        (a * (agents.get(i).getFitness() - minChance) -0.5 )) {
+                        (a * (agents.get(i).getFitness() - minChance) -0.5)) {
                     survivorList.add(agents.get(i));
                 }
             }
 
         }
-        System.out.println(survivorList.size());
+        //System.out.println(survivorList.size());
     }
 
     private List<Agent> breed(List<Agent> survivorList) throws EvolvingNeuralNet.NotEnoughLayersException {
         List<Agent> newAgents = new ArrayList<Agent>();
-        for (int i = 0; i < population - 1; i++) {
+        for (int i = 0; i < population -3 ; i++) {
             Agent p1 = survivorList.get(Util.random.nextInt(survivorList.size()));
             Agent p2 = survivorList.get(Util.random.nextInt(survivorList.size()));
             newAgents.add(generateAgent(p1, p2));
         }
+        newAgents.add(generateAgent());
+        newAgents.add(generateAgent());
         newAgents.add(generateAgent());
         return newAgents;
     }

@@ -30,7 +30,7 @@ public class NewExample implements FormulaContainer {
 
 
     public static double fStat(double x) {
-        return Math.pow(x*10, 2)*10 + Math.log(Math.sin(x*100) * 20 + 30)*10 + 100;
+        return 100*Math.pow(x, 2);
     }
 
     public double f(double x) {

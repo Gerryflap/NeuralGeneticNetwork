@@ -16,21 +16,30 @@ public class TicTacToeGame {
 
     public static void main(String[] args) {
         try {
-            TicTacToeEvolutionSimulator simulator = new TicTacToeEvolutionSimulator(40);
-            int best = holdTournament(simulator);;
+            Scanner scanner = new Scanner(System.in);
+            TicTacToeEvolutionSimulator simulator = new TicTacToeEvolutionSimulator(150);
+            int best = holdTournament(simulator);
             double avg = -200;
+            double avgavg = -200;
             int i = 0;
-            while(i < 1000 || avg < -5) {
+            while(true) {
                 simulator.iterate();
                 best = holdTournament(simulator);
                 avg = simulator.getAverageFitness();
-                System.out.println(best + ", \t\t" + simulator.getAverageFitness());
+                avgavg = 0.9 * avgavg + 0.1 * avg;
+
+                if (scanner.hasNextLine()) {
+                    String line = scanner.nextLine();
+                    if (line.equals("stats")) {
+                        System.out.println(best + ", \t\t" + simulator.getAverageFitness() + ", \t\t " + avgavg);
+                    } else if (line.equals("play")){
+                        playAgainstAI((TicTacToeAgent) simulator.getFittestAgent(), scanner);
+                    }
+                }
                 i += 1;
 
             }
-            while (true) {
-                playAgainstAI((TicTacToeAgent) simulator.getFittestAgent());
-            }
+
         } catch (EvolvingNeuralNet.NotEnoughLayersException e) {
             e.printStackTrace();
         }
@@ -58,11 +67,9 @@ public class TicTacToeGame {
         return (int) simulator.getFittestAgent().getFitness();
     }
 
-    public static void playAgainstAI(TicTacToeAgent agent) {
+    public static void playAgainstAI(TicTacToeAgent agent, Scanner scanner) {
         int aiPlayerNum = Util.random.nextInt(2);
         Board board = new Board();
-
-        Scanner scanner = new Scanner(System.in);
 
         int winner = -1;
         int player = 0;

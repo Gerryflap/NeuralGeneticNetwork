@@ -31,6 +31,8 @@ public class EvolvingNeuralNet {
         for (int i = 0; i < nLayers; i++) {
             if (i == 0) {
                 neuralNetwork[i] = new double[nInputs + 1][];
+            } else if (i == nLayers -1) {
+                neuralNetwork[i] = new double[nOutputs][];
             } else {
                 neuralNetwork[i] = new double[neuronsPerLayer + 1][];
             }
@@ -42,7 +44,7 @@ public class EvolvingNeuralNet {
                 if (layer < neuralNetwork.length - 2) {
                     neuralNetwork[layer][dot] = new double[neuronsPerLayer];
                 } else {
-                    neuralNetwork[layer][dot] = new double[neuronsPerLayer];
+                    neuralNetwork[layer][dot] = new double[nOutputs];
                 }
 
                 for (int connection = 0; connection < neuralNetwork[layer][dot].length; connection++) {
@@ -68,7 +70,7 @@ public class EvolvingNeuralNet {
             int layer = random.nextInt(nLayers);
             int dot = random.nextInt(neuralNetwork[layer].length);
             int connection = random.nextInt(neuralNetwork[layer][dot].length);
-            neuralNetwork[layer][dot][connection] = Util.getExponentialMultiplier();
+            neuralNetwork[layer][dot][connection] += Util.getExponentialMultiplier();
         }
     }
 
