@@ -36,6 +36,14 @@ public abstract class EvolutionSimulation {
    }
 
 
+    public double getAverageFitness() {
+        int avg = 0;
+        for (Agent agent: agents) {
+            avg += agent.getFitness();
+        }
+        return (double) avg/agents.size();
+    }
+
     /**
      * Select 2 fittest agents to have a base for the next generation.
      * @return the 2 fittest agents.
@@ -80,16 +88,19 @@ public abstract class EvolutionSimulation {
             }
         }
 
-        double a = 0.8/(maxChance - minChance);
+        double a = 1.0/(maxChance - minChance);
 
         for (int i = 0; i < agents.size(); i++) {
             if (!survivorList.contains(agents.get(i))) {
-                if (Util.random.nextDouble() <  (a * agents.get(i).getFitness() + 0.1)) {
+                //System.out.println(a * (agents.get(i).getFitness() - minChance) + 0.1);
+                if (Util.random.nextDouble() <
+                        (a * (agents.get(i).getFitness() - minChance) -0.5 )) {
                     survivorList.add(agents.get(i));
                 }
             }
 
         }
+        System.out.println(survivorList.size());
     }
 
     private List<Agent> breed(List<Agent> survivorList) throws EvolvingNeuralNet.NotEnoughLayersException {
