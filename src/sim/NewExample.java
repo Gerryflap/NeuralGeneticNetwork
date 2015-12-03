@@ -13,7 +13,7 @@ public class NewExample implements FormulaContainer {
     public static void main(String[] args) {
         NewEvolutionSimulator simulator = null;
         try {
-            simulator = new NewEvolutionSimulator(20);
+            simulator = new NewEvolutionSimulator(200);
             GraphViewer viewer = new GraphViewer();
             viewer.getGraphPanel().setFormula(new NewExample());
             viewer.setVisible(true);
@@ -30,7 +30,7 @@ public class NewExample implements FormulaContainer {
 
 
     public static double fStat(double x) {
-        return 100*Math.pow(x, 2);
+        return 10.0 * Math.pow(x*10.0,2);
     }
 
     public double f(double x) {

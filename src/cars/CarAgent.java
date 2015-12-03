@@ -30,14 +30,14 @@ public class CarAgent extends Agent {
     @Override
     public void setStaticVars() {
         //3 collision lines
-        NEURAL_INPUTS = 4;
+        NEURAL_INPUTS = 10;
 
         NEURAL_LAYERS = 5;
-        NEURONS_PER_LAYER = 25;
+        NEURONS_PER_LAYER = 50;
         //speed and delta angle
         NEURAL_OUTPUTS = 2;
 
-        MUTATION_CHANCE = 0.5;
+        MUTATION_CHANCE = 0.9;
 
         MEMORY_NEURONS = 5;
     }
@@ -63,7 +63,6 @@ public class CarAgent extends Agent {
             x += Math.cos(rotation) * speed;
             y += Math.sin(rotation) * speed;
             damage -= 0.7 * speed;
-            damage += Math.abs(oldSpeed - speed) < 0.1?1:0;
             damage += Math.abs(oldRotation - rotation) < 0.1?1:0;
         } catch (Util.DimensionMismatchException e) {
             e.printStackTrace();
@@ -72,11 +71,15 @@ public class CarAgent extends Agent {
 
     public void collide() {
         hasCollided = true;
-        if (damage == 0) {
-            damage += 100;
-        } else {
-            damage += 1;
-        }
+
+        damage += 1;
+
+    }
+
+    public void outBounds() {
+        hasCollided = true;
+
+        damage += 20;
     }
 
     public double getX() {

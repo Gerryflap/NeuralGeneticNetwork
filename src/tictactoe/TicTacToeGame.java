@@ -5,6 +5,10 @@ import neuralNet.EvolutionSimulation;
 import neuralNet.EvolvingNeuralNet;
 import neuralNet.Util;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -16,12 +20,12 @@ public class TicTacToeGame {
 
     public static void main(String[] args) {
         try {
-            TicTacToeEvolutionSimulator simulator = new TicTacToeEvolutionSimulator(150);
+            TicTacToeEvolutionSimulator simulator = new TicTacToeEvolutionSimulator(100);
             StdInListener listener = new StdInListener();
             listener.start();
             int best = holdTournament(simulator);
             double avg = -200;
-            double avgavg = -200;
+            double avgavg = -2000;
             int i = 0;
             while (true) {
                 simulator.iterate();
@@ -34,6 +38,22 @@ public class TicTacToeGame {
                         System.out.println(best + ", \t\t" + simulator.getAverageFitness() + ", \t\t " + avgavg);
                     } else if (line.equals("play")) {
                         playAgainstAI((TicTacToeAgent) simulator.getFittestAgent(), listener);
+                    } else if (line.equals("save")) {
+                        File file = new File("./TTTsimulation.sim");
+                        simulator.save(file);
+                        System.out.printf("Saved a simulation with a fittest agent with fitness %f\n", simulator.getFittestAgent().getFitness());
+
+                    } else if (line.equals("load")) {
+                        File file = new File("./TTTsimulation.sim");
+                        try {
+                            TicTacToeEvolutionSimulator out = (TicTacToeEvolutionSimulator) TicTacToeEvolutionSimulator.loadSimulation(file);
+                            System.out.printf("Loaded a simulation wit a fittest agent with fitness %f\n", out.getFittestAgent().getFitness());
+                            simulator = out;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (ClassNotFoundException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
 
@@ -52,6 +72,18 @@ public class TicTacToeGame {
         for (int i = 0; i < agents.size(); i++) {
             TicTacToeAgent  agent1 = (TicTacToeAgent) agents.get(i);
 
+            for (int j = 0; j < 10; j++) {
+                TicTacToeAgent agent2 = (TicTacToeAgent) agents.get(Util.random.nextInt(agents.size()));
+                int winner = playGame(agent1, agent2);
+                if (winner == 1){
+                    agent1.hasWon();
+                    agent2.hasLost();
+                } else if (winner == 2) {
+                    agent2.hasWon();
+                    agent1.hasLost();
+                }
+            }
+            /**
             for (int j = (i + 1); j < agents.size(); j++) {
                 TicTacToeAgent agent2 = (TicTacToeAgent) agents.get(j);
                 int winner = playGame(agent1, agent2);
@@ -63,11 +95,54 @@ public class TicTacToeGame {
                     agent1.hasLost();
                 }
             }
+             */
+
+            for (int j = 0; j < 100; j++) {
+                int winner = playAgainsRandomAI(agent1);
+                if (winner == 1){
+                    agent1.hasWon();
+                } else if (winner == 2) {
+                    agent1.hasLost();
+                }
+            }
 
         }
         return (int) simulator.getFittestAgent().getFitness();
     }
 
+    public static int playAgainsRandomAI( TicTacToeAgent agent) {
+        Board board = new Board();
+        int aiPlayerNum = Util.random.nextInt(2);
+
+        int winner = -1;
+        int player = 0;
+        while (winner == -1){
+            if (player == aiPlayerNum) {
+                boolean moveSuccessful = board.doMove(agent.makeMove(board.getBoardForAI()));
+                if (!moveSuccessful) {
+                    board.getFirstValidMove();
+                    agent.madeError();
+                }
+            } else {
+                int pos = 0;
+                ArrayList<Integer> possibleMoves = new ArrayList<Integer>();
+                for (int i = 0; i < 9; i++) {
+                    possibleMoves.add(i);
+                }
+                while (board.getPlayerAt(pos) != 0){
+                    possibleMoves.remove(new Integer(pos));
+                    pos = possibleMoves.get(Util.random.nextInt(possibleMoves.size()));
+                }
+                board.doMove(pos);
+            }
+            winner = board.getWinner();
+
+            player = (player + 1)%2;
+
+        }
+        return aiPlayerNum == 1?winner:((winner+1)%2 + 1);
+
+    }
     public static void playAgainstAI(TicTacToeAgent agent, StdInListener listener) {
 
         int aiPlayerNum = Util.random.nextInt(2);
@@ -136,6 +211,6 @@ public class TicTacToeGame {
             player = (player + 1)%2;
 
         }
-        return winner;
+        return agent1Starting?winner:((winner+1)%2 + 1);
     }
 }

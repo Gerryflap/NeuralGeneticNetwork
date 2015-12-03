@@ -2,15 +2,39 @@ package neuralNet;
 
 import cars.CarAgent;
 
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
  * Created by gerben on 27-11-15.
  */
-public abstract class EvolutionSimulation {
+public abstract class EvolutionSimulation implements Serializable {
     protected int population;
     public List<Agent> agents;
+
+    public static EvolutionSimulation loadSimulation(File file) throws IOException, ClassNotFoundException {
+        ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file));
+        EvolutionSimulation out = (EvolutionSimulation) objectInputStream.readObject();
+        objectInputStream.close();
+        return out;
+    }
+
+    public boolean save(File file) {
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(out);
+            objectOutputStream.writeObject(this);
+            objectOutputStream.close();
+            return true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     public abstract List<Agent> generateAgents() throws EvolvingNeuralNet.NotEnoughLayersException;
 
@@ -88,13 +112,13 @@ public abstract class EvolutionSimulation {
             }
         }
 
-        double a = 1.5/(maxChance - minChance);
+        double a = 1.1/(maxChance - minChance);
 
         for (int i = 0; i < agents.size(); i++) {
             if (!survivorList.contains(agents.get(i))) {
                 //System.out.println(a * (agents.get(i).getFitness() - minChance) + 0.1);
                 if (Util.random.nextDouble() <
-                        (a * (agents.get(i).getFitness() - minChance) -0.5)) {
+                        (a * (agents.get(i).getFitness() - minChance)) - 0.1) {
                     survivorList.add(agents.get(i));
                 }
             }
@@ -105,14 +129,20 @@ public abstract class EvolutionSimulation {
 
     private List<Agent> breed(List<Agent> survivorList) throws EvolvingNeuralNet.NotEnoughLayersException {
         List<Agent> newAgents = new ArrayList<Agent>();
-        for (int i = 0; i < population -3 ; i++) {
-            Agent p1 = survivorList.get(Util.random.nextInt(survivorList.size()));
-            Agent p2 = survivorList.get(Util.random.nextInt(survivorList.size()));
+        try {
+            survivorList.sort(new AgentComparator());
+        } catch (IllegalArgumentException e){
+            e.printStackTrace();
+            System.out.println(survivorList);
+        }
+        for (int i = 0; i < population; i++) {
+            Agent p1 = getAgentByChances(survivorList);
+            Agent p2 = getAgentByChances(survivorList);
             newAgents.add(generateAgent(p1, p2));
         }
-        newAgents.add(generateAgent());
-        newAgents.add(generateAgent());
-        newAgents.add(generateAgent());
+        //newAgents.add(generateAgent());
+        //newAgents.add(generateAgent());
+        //newAgents.add(generateAgent());
         return newAgents;
     }
 
@@ -126,7 +156,26 @@ public abstract class EvolutionSimulation {
         return bestAgent;
     }
 
+    public Agent getAgentByChances(List<Agent> sortedSurvivors) {
+        for (int i = 0; i < sortedSurvivors.size(); i++) {
+            if (Util.random.nextDouble() > ((double) i)/sortedSurvivors.size()) {
+                return sortedSurvivors.get(i);
+            }
+        }
+        return sortedSurvivors.get(sortedSurvivors.size() - 1);
+    }
+
     public List<Agent> getAgents() {
         return agents;
     }
+
+    class AgentComparator implements Comparator<Agent> {
+
+        @Override
+        public int compare(Agent o1, Agent o2) {
+            return o2.compareTo(o1);
+        }
+    }
 }
+
+

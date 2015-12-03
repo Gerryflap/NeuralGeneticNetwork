@@ -85,10 +85,20 @@ public class Board {
     }
 
     public double[] getBoardForAI() {
-        double[] aiBoard = new double[10];
-        aiBoard[0] = player;
-        for (int i = 1; i < aiBoard.length; i++) {
-            aiBoard[i] = board[i-1];
+        double[] aiBoard = new double[18];
+        for (int i = 0; i < board.length; i++) {
+            if (board[i] != 0) {
+                if (board[i] == player) {
+                    aiBoard[i] = 1;
+                    aiBoard[i + 9] = 0;
+                } else {
+                    aiBoard[i] = 0;
+                    aiBoard[i + 9] = 1;
+                }
+            } else {
+                aiBoard[i] = board[i];
+                aiBoard[i + 9] = board[i];
+            }
         }
         return aiBoard;
     }

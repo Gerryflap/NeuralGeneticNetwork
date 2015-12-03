@@ -21,17 +21,17 @@ public class TicTacToeAgent extends Agent {
 
     @Override
     public void setStaticVars() {
-        NEURAL_INPUTS = 10;
+        NEURAL_INPUTS = 18;
         NEURAL_LAYERS = 4;
-        NEURONS_PER_LAYER = 21;
+        NEURONS_PER_LAYER = 36;
         OUTCOME_MULTIPLIER = 1;
         NEURAL_OUTPUTS = 9;
-        MUTATION_CHANCE = 0.6;
+        MUTATION_CHANCE = 0.9;
     }
 
     @Override
     public double getFitness() {
-        return winLossSum - totalErrors * 10;
+        return winLossSum - totalErrors * 100;
     }
 
     public void hasWon() {

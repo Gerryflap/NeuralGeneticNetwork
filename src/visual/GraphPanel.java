@@ -47,12 +47,12 @@ public class GraphPanel extends JPanel {
             int[] ygs = new int[w];
             for (int x = 0; x < w; x++) {
                 xs[x] = x;
-                ygs[x] = (int) f.f(scaleTranform(x, w, 0));
+                ygs[x] = (int) f.f(scaleTranform(x, w/4, 0));
                 try {
                     if (agent_ != null) {
-                        ys[x] = (int) (agent_.process(scaleTranform(x, w, 0))[0]);
+                        ys[x] = (int) (agent_.process(scaleTranform(x, w/4, 0))[0]);
                     } else {
-                        ys[x] = (int) (1000.0 * neuralNet.process(new double[]{scaleTranform(x, w, 0)})[0]);
+                        ys[x] = (int) (1000.0 * neuralNet.process(new double[]{scaleTranform(x, w/4, 0)})[0]);
                     }
                 } catch (Util.DimensionMismatchException e) {
                     e.printStackTrace();

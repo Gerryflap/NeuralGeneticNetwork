@@ -1,9 +1,11 @@
 package neuralNet;
 
+import java.io.*;
+
 /**
  * Created by gerben on 27-11-15.
  */
-public abstract class Agent {
+public abstract class Agent implements Comparable, Serializable{
 
     protected EvolvingNeuralNet neuralNet;
     public static double MUTATION_CHANCE = 0.5;
@@ -16,6 +18,14 @@ public abstract class Agent {
     public static boolean staticSet = false;
 
     public abstract void setStaticVars();
+
+    public static Agent loadAgent(File file) throws IOException, ClassNotFoundException {
+        ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file));
+        Agent out = (Agent) objectInputStream.readObject();
+        objectInputStream.close();
+        return out;
+
+    }
 
     public Agent() throws EvolvingNeuralNet.NotEnoughLayersException {
         this(null, null);
@@ -54,5 +64,27 @@ public abstract class Agent {
         return Util.multiply(outcomeMultiplier ,neuralNet.process(input));
     }
 
+    @Override
+    public int compareTo(Object o) {
+        if (o instanceof Agent) {
+            Agent agent = (Agent) o;
+            return  (int) Math.signum(getFitness() - agent.getFitness());
+        }
+        return 0;
+    }
 
+    public boolean save(File file) {
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(out);
+            objectOutputStream.writeObject(this);
+            objectOutputStream.close();
+            return true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

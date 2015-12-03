@@ -27,26 +27,40 @@ public class CarEvolutionSimulator extends EvolutionSimulation{
         List<double[]> allRanges = new ArrayList<double[]>();
         if (i > 3000) {
             i = 0;
+            System.out.printf("Average fitness: %f, Highest fitness: %f\n", getAverageFitness(), getFittestAgent().getFitness());
             iterate();
             placeAgentsInGrid();
         }
         for (Agent agent: agents) {
             CarAgent carAgent = (CarAgent) agent;
             carAgent.resestHasCollided();
-            double[] ranges = new double[5];
+            double[] ranges = new double[11];
             double xOffset = Math.cos(carAgent.getRotation()) * 30;
             double yOffset = Math.sin(carAgent.getRotation()) * 30;
+            ranges[9] = getDistanceToCollision(carAgent.getRotation() - 2, carAgent.getX() + xOffset, carAgent.getY() + yOffset);
             ranges[0] = getDistanceToCollision(carAgent.getRotation() - 1, carAgent.getX() + xOffset, carAgent.getY() + yOffset);
+            ranges[7] = getDistanceToCollision(carAgent.getRotation() - 0.5, carAgent.getX() + xOffset, carAgent.getY() + yOffset);
             ranges[1] = getDistanceToCollision(carAgent.getRotation(), carAgent.getX() + xOffset, carAgent.getY() + yOffset);
+            ranges[8] = getDistanceToCollision(carAgent.getRotation() + 0.5, carAgent.getX() + xOffset, carAgent.getY() + yOffset);
             ranges[2] = getDistanceToCollision(carAgent.getRotation() + 1, carAgent.getX()+ xOffset, carAgent.getY()+ yOffset);
             ranges[3] = getDistanceToCollision(carAgent.getRotation() + Math.PI, carAgent.getX() - xOffset, carAgent.getY() - yOffset);
+            ranges[10] = getDistanceToCollision(carAgent.getRotation() + 2, carAgent.getX() + xOffset, carAgent.getY() + yOffset);
             for (Agent agent1: agents) {
                 CarAgent carAgent1 = (CarAgent) agent1;
-                if (agent != agent1 && Math.pow(carAgent.getX() - carAgent1.getX(), 2) + Math.pow(carAgent.getY() - carAgent1.getY(), 2) < 60*60) {
-                    if (carAgent.getSpeed() > carAgent1.getSpeed()) {
-                        carAgent.collide();
-                    } else {
-                        carAgent1.collide();
+                if (agent!=agent1) {
+                    double sqrDist = Math.pow(carAgent.getX() - carAgent1.getX(), 2) + Math.pow(carAgent.getY() - carAgent1.getY(), 2);
+                    if (sqrDist < 200 * 200) {
+                        ranges[5] += 1.0;
+                        if (sqrDist < 60 * 60) {
+                            carAgent.collide();
+                            carAgent1.collide();
+                            /**
+                             if (carAgent.getSpeed() > carAgent1.getSpeed()) {
+                             carAgent.collide();
+                             } else {
+                             carAgent1.collide();
+                             } **/
+                        }
                     }
                 }
             }
@@ -54,11 +68,11 @@ public class CarEvolutionSimulator extends EvolutionSimulation{
                 carAgent.collide();
             }*/
             if (w<carAgent.getX() || carAgent.getX()<0) {
-                carAgent.collide();
+                carAgent.outBounds();
             } else if (h<carAgent.getY() || carAgent.getY()<0) {
-                carAgent.collide();
+                carAgent.outBounds();
             }
-            //ranges[4] = carAgent.getFitness();
+            ranges[4] = carAgent.getSpeed();
 
             allRanges.add(ranges);
         }

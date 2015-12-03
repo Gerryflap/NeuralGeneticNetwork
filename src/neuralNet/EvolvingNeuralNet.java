@@ -1,13 +1,13 @@
 package neuralNet;
 
+import java.io.Serializable;
 import java.util.Random;
 
 /**
  * Created by gerben on 26-11-15.
  */
-public class EvolvingNeuralNet {
+public class EvolvingNeuralNet implements Serializable {
     double[][][] neuralNetwork;
-    public static Random random = new Random();
     private int nInputs;
     private int neuronsPerLayer;
     private int nLayers;
@@ -39,6 +39,7 @@ public class EvolvingNeuralNet {
         }
 
         //Initialize the Connections
+        boolean crossedOver = false;
         for (int layer = 0; layer < nLayers; layer++) {
             for (int dot = 0; dot < neuralNetwork[layer].length; dot++) {
                 if (layer < neuralNetwork.length - 2) {
@@ -51,10 +52,12 @@ public class EvolvingNeuralNet {
                     if(parent1 ==null ||parent2 == null) {
                         neuralNetwork[layer][dot][connection] = Util.getExponentialMultiplier();
                     } else {
-                        if (Util.flipCoin()) {
+                        if (!crossedOver) {
                             neuralNetwork[layer][dot][connection] = parent1.getMultiplier(layer,dot,connection);
+                            crossedOver = Util.random.nextDouble() > 0.99;
                         } else {
                             neuralNetwork[layer][dot][connection] = parent2.getMultiplier(layer,dot,connection);
+                            crossedOver = Util.random.nextDouble() > 0.01;
                         }
                     }
                 }
@@ -63,13 +66,15 @@ public class EvolvingNeuralNet {
 
     }
 
+
+
     public void mutate(double chance) {
 
         //I too  like to live dangerously...
-        while(random.nextDouble() < chance) {
-            int layer = random.nextInt(nLayers);
-            int dot = random.nextInt(neuralNetwork[layer].length);
-            int connection = random.nextInt(neuralNetwork[layer][dot].length);
+        while(Util.random.nextDouble() < chance) {
+            int layer = Util.random.nextInt(nLayers);
+            int dot = Util.random.nextInt(neuralNetwork[layer].length);
+            int connection = Util.random.nextInt(neuralNetwork[layer][dot].length);
             neuralNetwork[layer][dot][connection] += Util.getExponentialMultiplier();
         }
     }
