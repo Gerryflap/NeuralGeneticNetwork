@@ -97,11 +97,20 @@ public class Board {
         String output = "";
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 3; x++) {
-                output += String.format("%d\t", getPlayerAt(x,y));
+                output += String.format("%d\t", getPlayerAt(x, y));
             }
-            output+= "\n";
+            output += "\n";
 
         }
         return output;
+    }
+
+    public int getFirstValidMove() {
+        for (int i = 0; i < board.length; i++) {
+            if(board[i] == 0) {
+                return i;
+            }
+        }
+        return 0;
     }
 }

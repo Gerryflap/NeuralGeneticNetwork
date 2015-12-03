@@ -22,11 +22,11 @@ public class TicTacToeAgent extends Agent {
     @Override
     public void setStaticVars() {
         NEURAL_INPUTS = 10;
-        NEURAL_LAYERS = 3;
-        NEURONS_PER_LAYER = 9;
+        NEURAL_LAYERS = 4;
+        NEURONS_PER_LAYER = 21;
         OUTCOME_MULTIPLIER = 1;
         NEURAL_OUTPUTS = 9;
-        MUTATION_CHANCE = 0.4;
+        MUTATION_CHANCE = 0.6;
     }
 
     @Override

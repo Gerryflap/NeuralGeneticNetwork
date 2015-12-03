@@ -16,27 +16,28 @@ public class TicTacToeGame {
 
     public static void main(String[] args) {
         try {
-            Scanner scanner = new Scanner(System.in);
             TicTacToeEvolutionSimulator simulator = new TicTacToeEvolutionSimulator(150);
+            StdInListener listener = new StdInListener();
+            listener.start();
             int best = holdTournament(simulator);
             double avg = -200;
             double avgavg = -200;
             int i = 0;
-            while(true) {
+            while (true) {
                 simulator.iterate();
                 best = holdTournament(simulator);
                 avg = simulator.getAverageFitness();
                 avgavg = 0.9 * avgavg + 0.1 * avg;
-
-                if (scanner.hasNextLine()) {
-                    String line = scanner.nextLine();
+                String line = listener.popLine();
+                if(line != null) {
                     if (line.equals("stats")) {
                         System.out.println(best + ", \t\t" + simulator.getAverageFitness() + ", \t\t " + avgavg);
-                    } else if (line.equals("play")){
-                        playAgainstAI((TicTacToeAgent) simulator.getFittestAgent(), scanner);
+                    } else if (line.equals("play")) {
+                        playAgainstAI((TicTacToeAgent) simulator.getFittestAgent(), listener);
                     }
                 }
-                i += 1;
+
+            i += 1;
 
             }
 
@@ -67,7 +68,8 @@ public class TicTacToeGame {
         return (int) simulator.getFittestAgent().getFitness();
     }
 
-    public static void playAgainstAI(TicTacToeAgent agent, Scanner scanner) {
+    public static void playAgainstAI(TicTacToeAgent agent, StdInListener listener) {
+
         int aiPlayerNum = Util.random.nextInt(2);
         Board board = new Board();
 
@@ -84,14 +86,8 @@ public class TicTacToeGame {
 
 
             } else {
-                while(!scanner.hasNextLine()) {
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                int move = Integer.valueOf(scanner.nextLine());
+
+                int move = Integer.valueOf(listener.getNextLine());
                 moveSuccessful = board.doMove(move);
             }
 
@@ -111,6 +107,7 @@ public class TicTacToeGame {
         } else {
             System.out.println("You've won!");
         }
+
     }
 
     public static int playGame(TicTacToeAgent agent1, TicTacToeAgent agent2) {
@@ -130,8 +127,9 @@ public class TicTacToeGame {
 
             boolean moveSuccessful = board.doMove(agents[player].makeMove(board.getBoardForAI()));
             if (!moveSuccessful) {
-                winner = 0;
+                board.doMove(board.getFirstValidMove());
                 agents[player].madeError();
+                winner = board.getWinner();
             } else {
                 winner = board.getWinner();
             }

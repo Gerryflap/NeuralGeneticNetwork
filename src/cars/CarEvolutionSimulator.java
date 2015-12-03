@@ -123,7 +123,7 @@ public class CarEvolutionSimulator extends EvolutionSimulation{
             if (sqrDist < minSqrDist && sqrDist != 0) {
                 double angle = Math.atan2(-(y - carAgent.getY()),-(x - carAgent.getX()));
                 //System.out.printf("Delta rotation: %f, Allowed delta: %f\n",Math.abs(rotation - angle) , Math.atan(60.0*0.5/Math.pow(sqrDist, 0.5)));
-                if (Math.abs(rotation - angle) < Math.atan(60.0*0.5/Math.pow(sqrDist, 0.5))) {
+                if (Math.abs(rotation - angle)%(2*Math.PI) < Math.atan(60.0*0.5/Math.pow(sqrDist, 0.5))) {
                     minSqrDist = sqrDist;
                 }
             }
@@ -176,8 +176,9 @@ public class CarEvolutionSimulator extends EvolutionSimulation{
         for (int i = 0; i < agents.size(); i++) {
 
             CarAgent carAgent = (CarAgent) agents.get(i);
-            carAgent.setX(i * 100 % w);
-            carAgent.setY((i * 100 / w) * 100);
+            carAgent.setRotation(Util.random.nextDouble()* Math.PI * 2);
+            carAgent.setX(i * 200 % w);
+            carAgent.setY((i * 200 / w) * 200);
         }
     }
 

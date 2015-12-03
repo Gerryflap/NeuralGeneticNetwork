@@ -37,14 +37,14 @@ public class CarAgent extends Agent {
         //speed and delta angle
         NEURAL_OUTPUTS = 2;
 
-        MUTATION_CHANCE = 0.99;
+        MUTATION_CHANCE = 0.5;
 
         MEMORY_NEURONS = 5;
     }
 
     @Override
     public double getFitness() {
-        return -damage;
+        return -1 * damage;
     }
 
     public void drive(double... ranges) {
@@ -56,13 +56,13 @@ public class CarAgent extends Agent {
             speed = Math.min(speed, 2);
             speed = Math.max(speed, -0.3);
             double oldRotation = rotation;
-            rotation = (rotation + (2*output[1] -1) * 0.003 /(speed<0.1?0.1:speed) + 2* Math.PI)%(2*Math.PI);
+            rotation = (rotation + (2*output[1] -1) * 0.0003 /(speed<0.1?0.1:speed) + 2* Math.PI)%(2*Math.PI);
             speed*= 0.99;
 
 
             x += Math.cos(rotation) * speed;
             y += Math.sin(rotation) * speed;
-            damage -= 1 * speed;
+            damage -= 0.7 * speed;
             damage += Math.abs(oldSpeed - speed) < 0.1?1:0;
             damage += Math.abs(oldRotation - rotation) < 0.1?1:0;
         } catch (Util.DimensionMismatchException e) {
@@ -129,5 +129,9 @@ public class CarAgent extends Agent {
 
     public double[] getRanges() {
         return ranges;
+    }
+
+    public void setRotation(double rotation) {
+        this.rotation = rotation;
     }
 }
