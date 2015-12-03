@@ -53,7 +53,7 @@ public class Util {
         if (value == 0) {
             return 0;
         }
-        value = 1/value;
+        value = 1/value-1;
         return random.nextBoolean()?value:-value;
     }
 
