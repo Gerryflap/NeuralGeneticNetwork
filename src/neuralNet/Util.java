@@ -49,12 +49,15 @@ public class Util {
     }
 
     public static double getExponentialMultiplier() {
+        /**
         double value = random.nextDouble();
         if (value == 0) {
             return 0;
         }
         value = 1/value-1;
         return random.nextBoolean()?value:-value;
+         */
+        return random.nextGaussian();
     }
 
     public static class DimensionMismatchException extends Exception {

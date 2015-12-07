@@ -135,12 +135,16 @@ public abstract class EvolutionSimulation implements Serializable {
             e.printStackTrace();
             System.out.println(survivorList);
         }
-        for (int i = 0; i < population; i++) {
+        Agent fittest = getFittestAgent();
+        for (int i = 0; i < population -1; i++) {
             Agent p1 = getAgentByChances(survivorList);
             Agent p2 = getAgentByChances(survivorList);
-            newAgents.add(generateAgent(p1, p2));
+            Agent newAgent = generateAgent(p1, p2);
+            newAgents.add(newAgent);
+            newAgent.mutate(2*Util.sig(fittest.getFitness() - 0.5*(p1.getFitness() + p2.getFitness())));
         }
-        //newAgents.add(generateAgent());
+        fittest.resetFitness();
+        newAgents.add(fittest);
         //newAgents.add(generateAgent());
         //newAgents.add(generateAgent());
         return newAgents;
@@ -154,6 +158,16 @@ public abstract class EvolutionSimulation implements Serializable {
             }
         }
         return bestAgent;
+    }
+
+    public double getMedianFitness(){
+        List<Agent> sorted = new ArrayList<>(agents);
+        sorted.sort(new AgentComparator());
+        if (sorted.size() % 2 == 0) {
+            return 0.5 * (sorted.get(sorted.size()/2).getFitness() + sorted.get(sorted.size()/2 + 1).getFitness());
+        } else {
+            return sorted.get(sorted.size()/2).getFitness();
+        }
     }
 
     public Agent getAgentByChances(List<Agent> sortedSurvivors) {

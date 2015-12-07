@@ -66,16 +66,30 @@ public class EvolvingNeuralNet implements Serializable {
 
     }
 
+    public void mutate(double chance){
+        mutate(chance, 1.0);
+    }
 
-
-    public void mutate(double chance) {
+    public void mutate(double chance, double mutationMultiplier) {
 
         //I too  like to live dangerously...
+        /**
         while(Util.random.nextDouble() < chance) {
             int layer = Util.random.nextInt(nLayers);
             int dot = Util.random.nextInt(neuralNetwork[layer].length);
             int connection = Util.random.nextInt(neuralNetwork[layer][dot].length);
             neuralNetwork[layer][dot][connection] += Util.getExponentialMultiplier();
+        }
+
+         */
+        for (int layer = 0; layer < nLayers; layer++) {
+            for (int dot = 0; dot < neuralNetwork[layer].length; dot++) {
+                for (int connection = 0; connection < neuralNetwork[layer][dot].length; connection++) {
+                    if (Util.random.nextDouble() < chance) {
+                        neuralNetwork[layer][dot][connection] += Util.getExponentialMultiplier()*mutationMultiplier;
+                    }
+                }
+            }
         }
     }
 

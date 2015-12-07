@@ -42,9 +42,11 @@ public abstract class Agent implements Comparable, Serializable{
         } else {
             neuralNet = new MemorizingNeuralNet(NEURAL_INPUTS, NEURONS_PER_LAYER, NEURAL_LAYERS, NEURAL_OUTPUTS,
                     MEMORY_NEURONS, parent1.getNeuralNet(), parent2.getNeuralNet());
-
         }
-        neuralNet.mutate(MUTATION_CHANCE);
+    }
+
+    public void mutate(double chanceMultiplier) {
+        neuralNet.mutate(MUTATION_CHANCE, chanceMultiplier);
     }
     /**
      * Calculate the fitness.
@@ -87,4 +89,6 @@ public abstract class Agent implements Comparable, Serializable{
         }
         return false;
     }
+
+    public abstract void resetFitness();
 }

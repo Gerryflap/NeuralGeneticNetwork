@@ -4,6 +4,7 @@ import neuralNet.Agent;
 import neuralNet.EvolutionSimulation;
 import neuralNet.EvolvingNeuralNet;
 import neuralNet.Util;
+import visual.EvolutionInfoView;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,23 +17,33 @@ import java.util.Scanner;
  * Created by gerben on 2-12-15.
  */
 public class TicTacToeGame {
+    static MoveEvaluator evaluator = new MoveEvaluator(10);
 
 
     public static void main(String[] args) {
         try {
-            TicTacToeEvolutionSimulator simulator = new TicTacToeEvolutionSimulator(100);
+            TicTacToeEvolutionSimulator simulator = new TicTacToeEvolutionSimulator(50);
             StdInListener listener = new StdInListener();
             listener.start();
+            boolean visual = args.length > 0;
+            EvolutionInfoView view = null;
+            if (visual) {
+                view = new EvolutionInfoView(simulator);
+            }
             int best = holdTournament(simulator);
             double avg = -200;
             double avgavg = -2000;
             int i = 0;
             while (true) {
+                evaluator.waitForJobsToFinish();
                 simulator.iterate();
                 best = holdTournament(simulator);
                 avg = simulator.getAverageFitness();
                 avgavg = 0.9 * avgavg + 0.1 * avg;
                 String line = listener.popLine();
+                if (visual) {
+                    view.update();
+                }
                 if(line != null) {
                     if (line.equals("stats")) {
                         System.out.println(best + ", \t\t" + simulator.getAverageFitness() + ", \t\t " + avgavg);
@@ -49,11 +60,19 @@ public class TicTacToeGame {
                             TicTacToeEvolutionSimulator out = (TicTacToeEvolutionSimulator) TicTacToeEvolutionSimulator.loadSimulation(file);
                             System.out.printf("Loaded a simulation wit a fittest agent with fitness %f\n", out.getFittestAgent().getFitness());
                             simulator = out;
+                            if (visual) {
+                                view.setSimulation(simulator);
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
                         } catch (ClassNotFoundException e) {
                             e.printStackTrace();
                         }
+                    } else if(line.equals("visual")) {
+
+                        view = new EvolutionInfoView(simulator);
+                        visual = true;
+
                     }
                 }
 
@@ -71,8 +90,8 @@ public class TicTacToeGame {
         List<Agent> agents = simulator.getAgents();
         for (int i = 0; i < agents.size(); i++) {
             TicTacToeAgent  agent1 = (TicTacToeAgent) agents.get(i);
-
-            for (int j = 0; j < 10; j++) {
+            /**
+            for (int j = 0; j < 5; j++) {
                 TicTacToeAgent agent2 = (TicTacToeAgent) agents.get(Util.random.nextInt(agents.size()));
                 int winner = playGame(agent1, agent2);
                 if (winner == 1){
@@ -83,7 +102,7 @@ public class TicTacToeGame {
                     agent1.hasLost();
                 }
             }
-            /**
+            */
             for (int j = (i + 1); j < agents.size(); j++) {
                 TicTacToeAgent agent2 = (TicTacToeAgent) agents.get(j);
                 int winner = playGame(agent1, agent2);
@@ -95,15 +114,20 @@ public class TicTacToeGame {
                     agent1.hasLost();
                 }
             }
-             */
 
-            for (int j = 0; j < 100; j++) {
+            /**
+            for (int j = 0; j < 50; j++) {
                 int winner = playAgainsRandomAI(agent1);
                 if (winner == 1){
                     agent1.hasWon();
                 } else if (winner == 2) {
                     agent1.hasLost();
                 }
+            }
+            */
+
+            for (int j = 0; j < 20; j++) {
+                evaluator.testAndRateAgent(agent1);
             }
 
         }
@@ -120,7 +144,7 @@ public class TicTacToeGame {
             if (player == aiPlayerNum) {
                 boolean moveSuccessful = board.doMove(agent.makeMove(board.getBoardForAI()));
                 if (!moveSuccessful) {
-                    board.getFirstValidMove();
+                    board.doMove(board.getFirstValidMove());
                     agent.madeError();
                 }
             } else {
@@ -202,9 +226,8 @@ public class TicTacToeGame {
 
             boolean moveSuccessful = board.doMove(agents[player].makeMove(board.getBoardForAI()));
             if (!moveSuccessful) {
-                board.doMove(board.getFirstValidMove());
                 agents[player].madeError();
-                winner = board.getWinner();
+                winner = (player +1)%2 + 1;
             } else {
                 winner = board.getWinner();
             }

@@ -27,14 +27,14 @@ public class CarEvolutionSimulator extends EvolutionSimulation{
         List<double[]> allRanges = new ArrayList<double[]>();
         if (i > 3000) {
             i = 0;
-            System.out.printf("Average fitness: %f, Highest fitness: %f\n", getAverageFitness(), getFittestAgent().getFitness());
+            System.out.printf("Average fitness: %f, Median fitness: %f, Highest fitness: %f\n", getAverageFitness(), getMedianFitness(), getFittestAgent().getFitness());
             iterate();
             placeAgentsInGrid();
         }
         for (Agent agent: agents) {
             CarAgent carAgent = (CarAgent) agent;
             carAgent.resestHasCollided();
-            double[] ranges = new double[11];
+            double[] ranges = new double[12];
             double xOffset = Math.cos(carAgent.getRotation()) * 30;
             double yOffset = Math.sin(carAgent.getRotation()) * 30;
             ranges[9] = getDistanceToCollision(carAgent.getRotation() - 2, carAgent.getX() + xOffset, carAgent.getY() + yOffset);
@@ -49,8 +49,10 @@ public class CarEvolutionSimulator extends EvolutionSimulation{
                 CarAgent carAgent1 = (CarAgent) agent1;
                 if (agent!=agent1) {
                     double sqrDist = Math.pow(carAgent.getX() - carAgent1.getX(), 2) + Math.pow(carAgent.getY() - carAgent1.getY(), 2);
-                    if (sqrDist < 200 * 200) {
-                        ranges[5] += 1.0;
+                    if (sqrDist < 300 * 300) {
+                        if(((CarAgent) agent1).hasSignaled()) {
+                            ranges[5] += 1.0;
+                        }
                         if (sqrDist < 60 * 60) {
                             carAgent.collide();
                             carAgent1.collide();
@@ -64,15 +66,16 @@ public class CarEvolutionSimulator extends EvolutionSimulation{
                     }
                 }
             }
-            /**if (Math.abs(carAgent.getSpeed()) < 0.01) {
+            if (Math.abs(carAgent.getSpeed()) < 0.01) {
                 carAgent.collide();
-            }*/
+            }
             if (w<carAgent.getX() || carAgent.getX()<0) {
                 carAgent.outBounds();
             } else if (h<carAgent.getY() || carAgent.getY()<0) {
                 carAgent.outBounds();
             }
             ranges[4] = carAgent.getSpeed();
+            ranges[11] = carAgent.hasCollided()?1.0:0.0;
 
             allRanges.add(ranges);
         }

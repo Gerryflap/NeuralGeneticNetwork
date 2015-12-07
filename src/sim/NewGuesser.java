@@ -14,9 +14,9 @@ public class NewGuesser extends Agent {
     private double fitness = Double.MIN_VALUE;
 
     public void setStaticVars() {
-        NEURAL_LAYERS = 4;
-        NEURONS_PER_LAYER = 15;
-        MUTATION_CHANCE = 0.8;
+        NEURAL_LAYERS = 6;
+        NEURONS_PER_LAYER = 20;
+        MUTATION_CHANCE = 0.5;
     }
 
     public NewGuesser() throws EvolvingNeuralNet.NotEnoughLayersException {
@@ -33,16 +33,16 @@ public class NewGuesser extends Agent {
             double meanError = 0;
 
             for (double x = 0; x <= RANGE; x += STEP_SIZE) {
-                double x_ = x + Util.random.nextDouble() * STEP_SIZE;
+                double x_ = x + (2 * Util.random.nextDouble() -1 ) * STEP_SIZE;
                 try {
-                    meanError += Math.abs(process(x_)[0] - NewExample.fStat(x_));
+                    meanError += Math.sqrt(Math.abs(process(x_)[0] - NewExample.fStat(x_)));
                 } catch (Util.DimensionMismatchException e) {
                     e.printStackTrace();
                 }
             }
             meanError /= RANGE;
 
-
+            fitness = 1 /meanError;
             return 1 / meanError;
         } else {
             return fitness;
@@ -52,5 +52,10 @@ public class NewGuesser extends Agent {
     @Override
     public double[] process(double... input) throws Util.DimensionMismatchException {
         return super.process(input , OUTCOME_MULTIPLIER);
+    }
+
+    @Override
+    public void resetFitness() {
+        fitness = Double.MIN_VALUE;
     }
 }

@@ -16,6 +16,7 @@ public class CarAgent extends Agent {
     private double speed = 0;
     private boolean hasCollided = false;
     private double[] ranges;
+    private boolean hasSignaled;
 
     public CarAgent(double x, double y) throws EvolvingNeuralNet.NotEnoughLayersException {
         this(x, y, null, null);
@@ -30,16 +31,16 @@ public class CarAgent extends Agent {
     @Override
     public void setStaticVars() {
         //3 collision lines
-        NEURAL_INPUTS = 10;
+        NEURAL_INPUTS = 12;
 
         NEURAL_LAYERS = 5;
-        NEURONS_PER_LAYER = 50;
+        NEURONS_PER_LAYER = 25;
         //speed and delta angle
-        NEURAL_OUTPUTS = 2;
+        NEURAL_OUTPUTS = 3;
 
         MUTATION_CHANCE = 0.9;
 
-        MEMORY_NEURONS = 5;
+        MEMORY_NEURONS = 1;
     }
 
     @Override
@@ -47,9 +48,15 @@ public class CarAgent extends Agent {
         return -1 * damage;
     }
 
+    @Override
+    public void resetFitness() {
+        damage = 0;
+    }
+
     public void drive(double... ranges) {
         try {
             double[] output = process(ranges);
+            this.hasSignaled = output[2] > 0.5 ;
             this.ranges = ranges;
             double oldSpeed = speed;
             speed += (2*output[0]-1)*0.01;
@@ -136,5 +143,9 @@ public class CarAgent extends Agent {
 
     public void setRotation(double rotation) {
         this.rotation = rotation;
+    }
+
+    public boolean hasSignaled() {
+        return hasSignaled;
     }
 }
