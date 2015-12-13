@@ -22,7 +22,7 @@ public class TicTacToeGame {
 
     public static void main(String[] args) {
         try {
-            TicTacToeEvolutionSimulator simulator = new TicTacToeEvolutionSimulator(50);
+            TicTacToeEvolutionSimulator simulator = new TicTacToeEvolutionSimulator(20);
             StdInListener listener = new StdInListener();
             listener.start();
             boolean visual = args.length > 0;
@@ -90,7 +90,7 @@ public class TicTacToeGame {
         List<Agent> agents = simulator.getAgents();
         for (int i = 0; i < agents.size(); i++) {
             TicTacToeAgent  agent1 = (TicTacToeAgent) agents.get(i);
-            /**
+
             for (int j = 0; j < 5; j++) {
                 TicTacToeAgent agent2 = (TicTacToeAgent) agents.get(Util.random.nextInt(agents.size()));
                 int winner = playGame(agent1, agent2);
@@ -102,7 +102,9 @@ public class TicTacToeGame {
                     agent1.hasLost();
                 }
             }
-            */
+
+
+            /**
             for (int j = (i + 1); j < agents.size(); j++) {
                 TicTacToeAgent agent2 = (TicTacToeAgent) agents.get(j);
                 int winner = playGame(agent1, agent2);
@@ -114,10 +116,11 @@ public class TicTacToeGame {
                     agent1.hasLost();
                 }
             }
+             */
 
             /**
             for (int j = 0; j < 50; j++) {
-                int winner = playAgainsRandomAI(agent1);
+                int winner = testAgainstAI(agent1);
                 if (winner == 1){
                     agent1.hasWon();
                 } else if (winner == 2) {
@@ -125,18 +128,24 @@ public class TicTacToeGame {
                 }
             }
             */
+            evaluator.testAndRateAgent(agent1, true);
 
-            for (int j = 0; j < 20; j++) {
-                evaluator.testAndRateAgent(agent1);
+            for (int j = 0; j < 3; j++) {
+                evaluator.testAndRateAgent(agent1, false);
             }
+
+
 
         }
         return (int) simulator.getFittestAgent().getFitness();
     }
 
-    public static int playAgainsRandomAI( TicTacToeAgent agent) {
+    public static int testAgainstAI(TicTacToeAgent agent, boolean perfect){
+        return testAgainstAI(agent, perfect, Util.random.nextBoolean());
+    }
+    public static int testAgainstAI(TicTacToeAgent agent, boolean perfect, boolean aiStarts) {
         Board board = new Board();
-        int aiPlayerNum = Util.random.nextInt(2);
+        int aiPlayerNum = aiStarts?0:1;
 
         int winner = -1;
         int player = 0;
@@ -149,13 +158,17 @@ public class TicTacToeGame {
                 }
             } else {
                 int pos = 0;
-                ArrayList<Integer> possibleMoves = new ArrayList<Integer>();
-                for (int i = 0; i < 9; i++) {
-                    possibleMoves.add(i);
-                }
-                while (board.getPlayerAt(pos) != 0){
-                    possibleMoves.remove(new Integer(pos));
-                    pos = possibleMoves.get(Util.random.nextInt(possibleMoves.size()));
+                if (perfect) {
+                    pos = board.getBestMove();
+                } else {
+                    ArrayList<Integer> possibleMoves = new ArrayList<Integer>();
+                    for (int i = 0; i < 9; i++) {
+                        possibleMoves.add(i);
+                    }
+                    while (board.getPlayerAt(pos) != 0) {
+                        possibleMoves.remove(new Integer(pos));
+                        pos = possibleMoves.get(Util.random.nextInt(possibleMoves.size()));
+                    }
                 }
                 board.doMove(pos);
             }
@@ -167,6 +180,9 @@ public class TicTacToeGame {
         return aiPlayerNum == 1?winner:((winner+1)%2 + 1);
 
     }
+    
+    
+    
     public static void playAgainstAI(TicTacToeAgent agent, StdInListener listener) {
 
         int aiPlayerNum = Util.random.nextInt(2);
@@ -180,6 +196,7 @@ public class TicTacToeGame {
             if (player == aiPlayerNum) {
 
                 int move = agent.makeMove(board.getBoardForAI());
+                //int move = board.getBestMove();
                 System.out.println("AI placed at " + move);
                 moveSuccessful = board.doMove(move);
 
@@ -227,10 +244,9 @@ public class TicTacToeGame {
             boolean moveSuccessful = board.doMove(agents[player].makeMove(board.getBoardForAI()));
             if (!moveSuccessful) {
                 agents[player].madeError();
-                winner = (player +1)%2 + 1;
-            } else {
-                winner = board.getWinner();
+                board.doMove(board.getFirstValidMove());
             }
+            winner = board.getWinner();
             player = (player + 1)%2;
 
         }

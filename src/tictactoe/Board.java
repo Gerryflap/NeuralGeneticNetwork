@@ -120,4 +120,51 @@ public class Board {
         }
         return 0;
     }
+
+    public boolean isFull() {
+        for (int aBoard : board) {
+            if (aBoard == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public int getBestMove(){
+        int bestMove = -1;
+        int winner = 0;
+        int bestScore = -1;
+        for (int i = 0; i < board.length; i++) {
+            if (board[i] == 0) {
+                board[i] = player;
+                if(isFull()) {
+                    board[i] = 0;
+                    return i;
+                }
+                player = (player)%2+1;
+                int enemyBest = getBestMove();
+                board[enemyBest] = player;
+                player = (player)%2+1;
+                winner = getWinner();
+                board[enemyBest] = 0;
+                board[i] = 0;
+                if (winner == player) {
+                    if (i >= 4) {
+                        return i;
+                    }
+                    bestScore = 1;
+                    bestMove = i;
+                } else if (winner > 0 && bestScore == -1) {
+                    bestMove = i;
+                } else if (winner == -1 && bestScore < 0) {
+                    bestScore = 0;
+                    bestMove = i;
+                } else if (winner == 0 && bestScore < 0){
+                    bestMove = i;
+                }
+
+            }
+        }
+        return bestMove;
+    }
 }

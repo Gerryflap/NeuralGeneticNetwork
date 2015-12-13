@@ -26,11 +26,11 @@ public class MoveEvaluator {
         threadsAvailable = new Semaphore(nThreads);
     }
 
-    public void testAndRateAgent(TicTacToeAgent agent) {
+    public void testAndRateAgent(TicTacToeAgent agent, boolean perfect) {
         try {
             threadsAvailable.acquire();
             synchronized (availableThreads) {
-                availableThreads.get(0).testAgent(agent);
+                availableThreads.get(0).testAgent(agent, perfect);
                 availableThreads.remove(0);
             }
         } catch (InterruptedException e) {
@@ -65,6 +65,7 @@ public class MoveEvaluator {
         TicTacToeAgent agent = null;
         MoveEvaluator master;
         Semaphore job = new Semaphore(0);
+        boolean perfect = false;
 
         public AgentTesterThread(MoveEvaluator master) {
             this.master = master;
@@ -79,21 +80,38 @@ public class MoveEvaluator {
                     break;
                 }
                 if (agent != null) {
-                    int winner = TicTacToeGame.playAgainsRandomAI(agent);
-                    if (winner == 1) {
-                        agent.hasWon();
-                    } else if (winner == 2) {
-                        agent.hasLost();
+                    if (perfect) {
+                        for (boolean nnStarts: new boolean[]{true, false}){
+                            int winner = TicTacToeGame.testAgainstAI(agent, perfect, nnStarts);
+                            reward(winner);
+                        }
                     }
+                    int winner = TicTacToeGame.testAgainstAI(agent, perfect);
+                    reward(winner);
+
                 }
                 master.setThreadAvailable(this);
             }
 
         }
 
-        public void testAgent(TicTacToeAgent agent) {
+        public void reward(int winner){
+            if (winner == 1) {
+                if(perfect) {
+                    agent.hasWonPerfect();
+                } else {
+                    agent.hasWon();
+                }
+            } else if (winner == 2) {
+                agent.hasLost();
+            }
+
+        }
+
+        public void testAgent(TicTacToeAgent agent, boolean perfect) {
             job.release();
             this.agent = agent;
+            this.perfect = perfect;
         }
     }
 

@@ -26,12 +26,12 @@ public class TicTacToeAgent extends Agent {
         NEURONS_PER_LAYER = 9;
         OUTCOME_MULTIPLIER = 1;
         NEURAL_OUTPUTS = 9;
-        MUTATION_CHANCE = 0.9;
+        MUTATION_CHANCE = 0.4;
     }
 
     @Override
     public double getFitness() {
-        return (winLossSum - Math.pow(1.1, totalErrors) * 20) * 20;
+        return (winLossSum - (Math.pow(1.1, totalErrors) + totalErrors) * 20) ;
     }
 
     @Override
@@ -43,6 +43,8 @@ public class TicTacToeAgent extends Agent {
     public void hasWon() {
         winLossSum += 2;
     }
+
+    public void hasWonPerfect(){winLossSum += 50;}
 
     public void hasLost() {
         winLossSum -= 1;
@@ -59,7 +61,7 @@ public class TicTacToeAgent extends Agent {
             double max = 0;
             int maxI = 0;
             for (int i = 0; i < 9; i++) {
-                if (out[i] > max) {
+                if (boardInfo[i] == 0 && out[i] > max) {
                     max = out[i];
                     maxI = i;
                 }
