@@ -41,9 +41,6 @@ public class TicTacToeGame {
                 avg = simulator.getAverageFitness();
                 avgavg = 0.9 * avgavg + 0.1 * avg;
                 String line = listener.popLine();
-                if (visual) {
-                    view.update();
-                }
                 if(line != null) {
                     if (line.equals("stats")) {
                         System.out.println(best + ", \t\t" + simulator.getAverageFitness() + ", \t\t " + avgavg);
@@ -76,7 +73,11 @@ public class TicTacToeGame {
                     }
                 }
 
-            i += 1;
+                if (visual) {
+                    view.update();
+                }
+
+                i += 1;
 
             }
 
@@ -128,8 +129,17 @@ public class TicTacToeGame {
             }
             */
 
-            for (int j = 0; j < 50; j++) {
+            //**
+            for (int j = 0; j < 20; j++) {
                 evaluator.testAndRateAgent(agent1);
+            }
+            //*/
+
+            int a = agent1.makeMove(new Board(new int[]{2,1,0,0,1,0,0,0,0}, 2));
+            if (a == 7) {
+                agent1.hasWon();
+            } else {
+                agent1.lostFromPlayer();
             }
 
         }
@@ -202,11 +212,13 @@ public class TicTacToeGame {
         if (winner == 0) {
             System.out.println("It's a draw!");
         } else if (winner == aiPlayerNum + 1) {
+            agent.hasWon();
             System.out.println("AI won!");
         } else if (winner == -2) {
             System.out.println("Someone made the wrong move!");
         } else {
             System.out.println("You've won!");
+            agent.lostFromPlayer();
         }
 
     }

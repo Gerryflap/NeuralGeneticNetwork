@@ -92,8 +92,8 @@ public class MoveEvaluator {
         }
 
         public void testAgent(TicTacToeAgent agent) {
-            job.release();
             this.agent = agent;
+            job.release();
         }
     }
 
