@@ -11,6 +11,13 @@ public class Board {
 
     }
 
+    public Board(int[] board, int player) {
+        if (board.length == 9) {
+            this.board = board;
+            this.player = player;
+        }
+    }
+
     public int getPlayerAt(int i) {
         if (i >= 0 && i < 9) {
             return board[i];
@@ -84,17 +91,20 @@ public class Board {
         }
     }
 
-    public double[] getBoardForAI() {
-        double[] aiBoard = new double[9];
+    public double[] getBoardForAI(int iMove) {
+        double[] aiBoard = new double[18];
         for (int i = 0; i < board.length; i++) {
-            if (board[i] != 0) {
-                if (board[i] == player) {
+            if (board[i] != 0 || i == iMove) {
+                if (board[i] == player || i == iMove) {
                     aiBoard[i] = 1;
+                    aiBoard[i + 9] = 0;
                 } else {
-                    aiBoard[i] = -1;
+                    aiBoard[i] = 0;
+                    aiBoard[i + 9] = 1;
                 }
             } else {
-                aiBoard[i] = board[i];
+                aiBoard[i] = 0;
+                aiBoard[i + 9] = 0;
             }
         }
         return aiBoard;

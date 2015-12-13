@@ -108,10 +108,12 @@ public class MoveEvaluator {
 
         }
 
+        public void testAgent(TicTacToeAgent agent) {
         public void testAgent(TicTacToeAgent agent, boolean perfect) {
             job.release();
             this.agent = agent;
             this.perfect = perfect;
+            job.release();
         }
     }
 

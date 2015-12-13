@@ -21,17 +21,17 @@ public class TicTacToeAgent extends Agent {
 
     @Override
     public void setStaticVars() {
-        NEURAL_INPUTS = 9;
+        NEURAL_INPUTS = 18;
         NEURAL_LAYERS = 3;
-        NEURONS_PER_LAYER = 9;
+        NEURONS_PER_LAYER = 18;
         OUTCOME_MULTIPLIER = 1;
-        NEURAL_OUTPUTS = 9;
-        MUTATION_CHANCE = 0.4;
+        NEURAL_OUTPUTS = 1;
+        MUTATION_CHANCE = 0.99;
     }
 
     @Override
     public double getFitness() {
-        return (winLossSum - (Math.pow(1.1, totalErrors) + totalErrors) * 20) ;
+        return (Math.signum(winLossSum) * Math.pow(winLossSum, 2) - (Math.pow(1.1, totalErrors) + totalErrors)* 20);
     }
 
     @Override
@@ -41,35 +41,41 @@ public class TicTacToeAgent extends Agent {
     }
 
     public void hasWon() {
-        winLossSum += 2;
+        winLossSum += 1;
     }
 
     public void hasWonPerfect(){winLossSum += 50;}
 
     public void hasLost() {
-        winLossSum -= 1;
+        winLossSum -= 2;
     }
 
     public void madeError() {
         totalErrors += 1;
     }
 
-    public int makeMove(double[] boardInfo){
+    public void lostFromPlayer() {winLossSum -= 1000;}
+
+    public int makeMove(Board boardInfo){
         try {
 
-            double[] out = process(boardInfo);
+            double[] out= null;
             double max = 0;
             int maxI = 0;
             for (int i = 0; i < 9; i++) {
-                if (boardInfo[i] == 0 && out[i] > max) {
-                    max = out[i];
-                    maxI = i;
+                if (boardInfo.getPlayerAt(i) == 0) {
+                    out = process(boardInfo.getBoardForAI(i));
+                    if (out[0] > max) {
+                        max = out[0];
+                        maxI = i;
+                    }
                 }
             }
             return maxI;
-             /**
-            return (int) (process(boardInfo)[0]*9);
-              */
+
+
+            //return (int) (process(boardInfo)[0]);
+
         } catch (Util.DimensionMismatchException e) {
             e.printStackTrace();
         }
