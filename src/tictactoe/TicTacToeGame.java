@@ -102,7 +102,8 @@ public class TicTacToeGame {
                     agent1.hasLost();
                 }
             }
-            */
+             //*/
+
             for (int j = (i + 1); j < agents.size(); j++) {
                 TicTacToeAgent agent2 = (TicTacToeAgent) agents.get(j);
                 int winner = playGame(agent1, agent2);
@@ -115,6 +116,7 @@ public class TicTacToeGame {
                 }
             }
 
+
             /**
             for (int j = 0; j < 50; j++) {
                 int winner = playAgainsRandomAI(agent1);
@@ -126,7 +128,7 @@ public class TicTacToeGame {
             }
             */
 
-            for (int j = 0; j < 20; j++) {
+            for (int j = 0; j < 50; j++) {
                 evaluator.testAndRateAgent(agent1);
             }
 

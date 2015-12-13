@@ -31,7 +31,7 @@ public class TicTacToeAgent extends Agent {
 
     @Override
     public double getFitness() {
-        return (winLossSum - Math.pow(1.1, totalErrors) * 20) * 20;
+        return (Math.signum(winLossSum) * Math.pow(winLossSum, 2) - (Math.pow(1.1, totalErrors) + totalErrors)* 20);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class TicTacToeAgent extends Agent {
     }
 
     public void hasWon() {
-        winLossSum += 2;
+        winLossSum += 1;
     }
 
     public void hasLost() {
@@ -59,9 +59,8 @@ public class TicTacToeAgent extends Agent {
             double max = 0;
             int maxI = 0;
             for (int i = 0; i < 9; i++) {
-                if (boardInfo.doMove(i)) {
-                    out = process(boardInfo.getBoardForAI());
-                    boardInfo.reset(i);
+                if (boardInfo.getPlayerAt(i) == 0) {
+                    out = process(boardInfo.getBoardForAI(i));
                     if (out[0] > max) {
                         max = out[0];
                         maxI = i;
