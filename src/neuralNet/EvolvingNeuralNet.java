@@ -54,7 +54,7 @@ public class EvolvingNeuralNet implements Serializable {
                     } else {
                         if (!crossedOver) {
                             neuralNetwork[layer][dot][connection] = parent1.getMultiplier(layer,dot,connection);
-                            crossedOver = Util.random.nextDouble() > 0.99;
+                            crossedOver = Util.random.nextDouble() > 0.94;
                         } else {
                             neuralNetwork[layer][dot][connection] = parent2.getMultiplier(layer,dot,connection);
                             crossedOver = Util.random.nextDouble() > 0.01;

@@ -120,4 +120,8 @@ public class Board {
         }
         return 0;
     }
+
+    public void reset(int i) {
+        board[i] = 0;
+    }
 }

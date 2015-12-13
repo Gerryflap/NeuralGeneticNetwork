@@ -142,7 +142,7 @@ public class TicTacToeGame {
         int player = 0;
         while (winner == -1){
             if (player == aiPlayerNum) {
-                boolean moveSuccessful = board.doMove(agent.makeMove(board.getBoardForAI()));
+                boolean moveSuccessful = board.doMove(agent.makeMove(board));
                 if (!moveSuccessful) {
                     board.doMove(board.getFirstValidMove());
                     agent.madeError();
@@ -179,7 +179,7 @@ public class TicTacToeGame {
             System.out.println(board);
             if (player == aiPlayerNum) {
 
-                int move = agent.makeMove(board.getBoardForAI());
+                int move = agent.makeMove(board);
                 System.out.println("AI placed at " + move);
                 moveSuccessful = board.doMove(move);
 
@@ -224,7 +224,7 @@ public class TicTacToeGame {
         int player = 0;
         while (winner == -1){
 
-            boolean moveSuccessful = board.doMove(agents[player].makeMove(board.getBoardForAI()));
+            boolean moveSuccessful = board.doMove(agents[player].makeMove(board));
             if (!moveSuccessful) {
                 agents[player].madeError();
                 winner = (player +1)%2 + 1;

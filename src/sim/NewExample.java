@@ -14,7 +14,7 @@ public class NewExample implements FormulaContainer {
     public static void main(String[] args) {
         NewEvolutionSimulator simulator = null;
         try {
-            simulator = new NewEvolutionSimulator(200);
+            simulator = new NewEvolutionSimulator(100);
             GraphViewer viewer = new GraphViewer();
             EvolutionInfoView evolutionInfoView = new EvolutionInfoView(simulator);
             viewer.getGraphPanel().setFormula(new NewExample());

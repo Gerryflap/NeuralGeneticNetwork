@@ -40,7 +40,7 @@ public class CarAgent extends Agent {
 
         MUTATION_CHANCE = 0.9;
 
-        MEMORY_NEURONS = 1;
+        MEMORY_NEURONS = 10;
     }
 
     @Override

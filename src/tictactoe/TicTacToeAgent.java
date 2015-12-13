@@ -25,7 +25,7 @@ public class TicTacToeAgent extends Agent {
         NEURAL_LAYERS = 3;
         NEURONS_PER_LAYER = 9;
         OUTCOME_MULTIPLIER = 1;
-        NEURAL_OUTPUTS = 9;
+        NEURAL_OUTPUTS = 1;
         MUTATION_CHANCE = 0.9;
     }
 
@@ -52,22 +52,27 @@ public class TicTacToeAgent extends Agent {
         totalErrors += 1;
     }
 
-    public int makeMove(double[] boardInfo){
+    public int makeMove(Board boardInfo){
         try {
 
-            double[] out = process(boardInfo);
+            double[] out= null;
             double max = 0;
             int maxI = 0;
             for (int i = 0; i < 9; i++) {
-                if (out[i] > max) {
-                    max = out[i];
-                    maxI = i;
+                if (boardInfo.doMove(i)) {
+                    out = process(boardInfo.getBoardForAI());
+                    boardInfo.reset(i);
+                    if (out[0] > max) {
+                        max = out[0];
+                        maxI = i;
+                    }
                 }
             }
             return maxI;
-             /**
-            return (int) (process(boardInfo)[0]*9);
-              */
+
+
+            //return (int) (process(boardInfo)[0]);
+
         } catch (Util.DimensionMismatchException e) {
             e.printStackTrace();
         }
