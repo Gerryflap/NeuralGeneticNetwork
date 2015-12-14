@@ -14,9 +14,9 @@ public class NewGuesser extends Agent {
     private double fitness = Double.MIN_VALUE;
 
     public void setStaticVars() {
-        NEURAL_LAYERS = 6;
-        NEURONS_PER_LAYER = 20;
-        MUTATION_CHANCE = 0.5;
+        NEURAL_LAYERS = 4;
+        NEURONS_PER_LAYER = 5;
+        MUTATION_CHANCE = 0.2;
     }
 
     public NewGuesser() throws EvolvingNeuralNet.NotEnoughLayersException {
@@ -42,8 +42,8 @@ public class NewGuesser extends Agent {
             }
             meanError /= RANGE;
 
-            fitness = 1 /meanError;
-            return 1 / meanError;
+            fitness = 1.0 /meanError;
+            return 1.0 / meanError;
         } else {
             return fitness;
         }

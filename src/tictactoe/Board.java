@@ -158,19 +158,19 @@ public class Board {
                 winner = getWinner();
                 board[enemyBest] = 0;
                 board[i] = 0;
-                if (winner == player) {
-                    if (i >= 4) {
-                        return i;
-                    }
+                if (i == 4) {
+                    return i;
+                } else if (winner == player) {
                     bestScore = 1;
                     bestMove = i;
                 } else if (winner > 0 && bestScore == -1) {
                     bestMove = i;
                 } else if (winner == -1 && bestScore < 0) {
-                    bestScore = 0;
+                    bestScore = -1;
                     bestMove = i;
                 } else if (winner == 0 && bestScore < 0){
                     bestMove = i;
+                    bestScore = 0;
                 }
 
             }

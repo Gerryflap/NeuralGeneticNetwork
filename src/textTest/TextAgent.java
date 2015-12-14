@@ -2,12 +2,13 @@ package textTest;
 
 import neuralNet.Agent;
 import neuralNet.EvolvingNeuralNet;
+import neuralNet.Util;
 
 /**
  * Created by gerben on 7-12-15.
  */
 public class TextAgent extends Agent {
-    public int goodClassifications = 0;
+    public int fitness = Integer.MIN_VALUE;
 
     public TextAgent() throws EvolvingNeuralNet.NotEnoughLayersException {
     }
@@ -20,20 +21,50 @@ public class TextAgent extends Agent {
     public void setStaticVars() {
         MEMORY_NEURONS = 5;
 
-        NEURAL_LAYERS = 3;
-        NEURAL_OUTPUTS = 1;
+        NEURAL_LAYERS = 5;
+        NEURAL_OUTPUTS = 5;
         NEURAL_INPUTS = 1;
         NEURONS_PER_LAYER = 5;
+        MUTATION_CHANCE = 0.1;
 
     }
 
     @Override
     public double getFitness() {
-        return goodClassifications;
+
+        if (fitness == Integer.MIN_VALUE) {
+            String s = "";
+            String out = "";
+            for (int i = 0; i < NEURAL_OUTPUTS; i++) {
+                char c = (char) (Util.random.nextDouble()*25 + 65);
+                s+=c;
+                try {
+                    if(i == NEURAL_OUTPUTS-1) {
+                        double[] outp = process((c - 65.0)/25.0);
+                        for (int i1 = 0; i1 < NEURAL_OUTPUTS; i1++) {
+                            double d = outp[i1];
+                            out += (char) (d * 25 + 65);
+                        }
+                    }
+                } catch (Util.DimensionMismatchException e) {
+                    e.printStackTrace();
+                }
+            }
+            fitness = 300;
+                //
+            for (int i = 0; i < s.length(); i++) {
+                fitness -= Math.pow(s.charAt(i) - out.charAt(i), 2);
+            }
+            if (fitness > 280) {
+                System.out.printf("Trained: %s, Result: %s\n", s, out);
+            }
+        }
+
+        return fitness;
     }
 
     @Override
     public void resetFitness() {
-        goodClassifications = 0;
+        fitness = Integer.MIN_VALUE;
     }
 }

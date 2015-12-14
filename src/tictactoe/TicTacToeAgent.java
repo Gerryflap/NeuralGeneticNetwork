@@ -22,11 +22,11 @@ public class TicTacToeAgent extends Agent {
     @Override
     public void setStaticVars() {
         NEURAL_INPUTS = 18;
-        NEURAL_LAYERS = 3;
+        NEURAL_LAYERS = 4;
         NEURONS_PER_LAYER = 18;
         OUTCOME_MULTIPLIER = 1;
         NEURAL_OUTPUTS = 1;
-        MUTATION_CHANCE = 0.99;
+        MUTATION_CHANCE = 0.2;
     }
 
     @Override
@@ -54,7 +54,7 @@ public class TicTacToeAgent extends Agent {
         totalErrors += 1;
     }
 
-    public void lostFromPlayer() {winLossSum -= 1000;}
+    public void lostFromPlayer() {winLossSum -= 100;}
 
     public int makeMove(Board boardInfo){
         try {

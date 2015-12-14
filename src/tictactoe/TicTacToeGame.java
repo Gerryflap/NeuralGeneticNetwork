@@ -22,7 +22,7 @@ public class TicTacToeGame {
 
     public static void main(String[] args) {
         try {
-            TicTacToeEvolutionSimulator simulator = new TicTacToeEvolutionSimulator(50);
+            TicTacToeEvolutionSimulator simulator = new TicTacToeEvolutionSimulator(20);
             StdInListener listener = new StdInListener();
             listener.start();
             boolean visual = args.length > 0;
@@ -92,6 +92,7 @@ public class TicTacToeGame {
         for (int i = 0; i < agents.size(); i++) {
             TicTacToeAgent  agent1 = (TicTacToeAgent) agents.get(i);
 
+            /**
             for (int j = 0; j < 5; j++) {
                 TicTacToeAgent agent2 = (TicTacToeAgent) agents.get(Util.random.nextInt(agents.size()));
                 int winner = playGame(agent1, agent2);
@@ -127,11 +128,11 @@ public class TicTacToeGame {
                 }
             }
             */
-            evaluator.testAndRateAgent(agent1, true);
+            //evaluator.testAndRateAgent(agent1, true);
 
             //**
             for (int j = 0; j < 20; j++) {
-                evaluator.testAndRateAgent(agent1);
+                evaluator.testAndRateAgent(agent1, false);
             }
             //*/
 
@@ -183,7 +184,8 @@ public class TicTacToeGame {
             player = (player + 1)%2;
 
         }
-        return aiPlayerNum == 1?winner:((winner+1)%2 + 1);
+
+        return aiPlayerNum == 0?winner:((winner)%2 + 1);
 
     }
     public static void playAgainstAI(TicTacToeAgent agent, StdInListener listener) {
@@ -199,6 +201,7 @@ public class TicTacToeGame {
             if (player == aiPlayerNum) {
 
                 int move = agent.makeMove(board);
+                //int move = board.getBestMove();
                 System.out.println("AI placed at " + move);
                 moveSuccessful = board.doMove(move);
 
@@ -254,6 +257,10 @@ public class TicTacToeGame {
             player = (player + 1)%2;
 
         }
-        return agent1Starting?winner:((winner+1)%2 + 1);
+        if (winner == 0) {
+            //a draw is like a loss for the starting agent
+            return agent1Starting?2:1;
+        }
+        return agent1Starting?winner:((winner)%2 + 1);
     }
 }

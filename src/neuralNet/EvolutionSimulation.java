@@ -171,8 +171,8 @@ public abstract class EvolutionSimulation implements Serializable {
     }
 
     public Agent getAgentByChances(List<Agent> sortedSurvivors) {
-        for (int i = 0; i < sortedSurvivors.size(); i++) {
-            if (Util.random.nextDouble() > ((double) i)/sortedSurvivors.size()) {
+        for (int i = sortedSurvivors.size() -1; i >= 0; i--) {
+            if (Util.random.nextDouble() > 1.0/(0.5 * population) * ((double) i)/sortedSurvivors.size()) {
                 return sortedSurvivors.get(i);
             }
         }
@@ -187,7 +187,7 @@ public abstract class EvolutionSimulation implements Serializable {
 
         @Override
         public int compare(Agent o1, Agent o2) {
-            return o2.compareTo(o1);
+            return o1.compareTo(o2);
         }
     }
 }
