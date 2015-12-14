@@ -26,11 +26,11 @@ public class MoveEvaluator {
         threadsAvailable = new Semaphore(nThreads);
     }
 
-    public void testAndRateAgent(TicTacToeAgent agent, boolean perfect) {
+    public void testAndRateAgent(TicTacToeAgent agent, boolean perfect, int i) {
         try {
             threadsAvailable.acquire();
             synchronized (availableThreads) {
-                availableThreads.get(0).testAgent(agent, perfect);
+                availableThreads.get(0).testAgent(agent, perfect, i);
                 availableThreads.remove(0);
             }
         } catch (InterruptedException e) {
@@ -66,6 +66,7 @@ public class MoveEvaluator {
         MoveEvaluator master;
         Semaphore job = new Semaphore(0);
         boolean perfect = false;
+        private int i;
 
         public AgentTesterThread(MoveEvaluator master) {
             this.master = master;
@@ -82,11 +83,11 @@ public class MoveEvaluator {
                 if (agent != null) {
                     if (perfect) {
                         for (boolean nnStarts: new boolean[]{true, false}){
-                            int winner = TicTacToeGame.testAgainstAI(agent, perfect, nnStarts);
+                            int winner = TicTacToeGame.testAgainstAI(agent, perfect, nnStarts, i);
                             reward(winner);
                         }
                     }
-                    int winner = TicTacToeGame.testAgainstAI(agent, perfect);
+                    int winner = TicTacToeGame.testAgainstAI(agent, perfect, i);
                     reward(winner);
 
                 }
@@ -109,10 +110,11 @@ public class MoveEvaluator {
         }
 
 
-        public void testAgent(TicTacToeAgent agent, boolean perfect) {
+        public void testAgent(TicTacToeAgent agent, boolean perfect, int i) {
             job.release();
             this.agent = agent;
             this.perfect = perfect;
+            this.i = i;
             job.release();
         }
     }

@@ -13,6 +13,7 @@ public class TextMain {
         EvolutionInfoView view = new EvolutionInfoView(textEvolver);
         view.setVisible(true);
         while (true) {
+            textEvolver.generateTest();
             textEvolver.iterate();
             System.out.println(textEvolver.getFittestAgent().getFitness());
             view.update();

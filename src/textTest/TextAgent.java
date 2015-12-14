@@ -9,6 +9,7 @@ import neuralNet.Util;
  */
 public class TextAgent extends Agent {
     public int fitness = Integer.MIN_VALUE;
+    public static String TEST_STRING = "";
 
     public TextAgent() throws EvolvingNeuralNet.NotEnoughLayersException {
     }
@@ -19,12 +20,12 @@ public class TextAgent extends Agent {
 
     @Override
     public void setStaticVars() {
-        MEMORY_NEURONS = 5;
+        MEMORY_NEURONS = 12;
 
-        NEURAL_LAYERS = 5;
-        NEURAL_OUTPUTS = 5;
+        NEURAL_LAYERS = 4;
+        NEURAL_OUTPUTS = 3;
         NEURAL_INPUTS = 1;
-        NEURONS_PER_LAYER = 5;
+        NEURONS_PER_LAYER = 15;
         MUTATION_CHANCE = 0.1;
 
     }
@@ -36,15 +37,19 @@ public class TextAgent extends Agent {
             String s = "";
             String out = "";
             for (int i = 0; i < NEURAL_OUTPUTS; i++) {
-                char c = (char) (Util.random.nextDouble()*25 + 65);
+                //char c = (char) (Util.random.nextDouble()*26 + 65);
+                char c = TEST_STRING.charAt(i);
                 s+=c;
                 try {
+
                     if(i == NEURAL_OUTPUTS-1) {
-                        double[] outp = process((c - 65.0)/25.0);
+                        double[] outp = process((c - 65.0)/26.0);
                         for (int i1 = 0; i1 < NEURAL_OUTPUTS; i1++) {
                             double d = outp[i1];
-                            out += (char) (d * 25 + 65);
+                            out += (char) (d * 26 + 65);
                         }
+                    } else {
+                        process((c - 65.0)/26.0);
                     }
                 } catch (Util.DimensionMismatchException e) {
                     e.printStackTrace();

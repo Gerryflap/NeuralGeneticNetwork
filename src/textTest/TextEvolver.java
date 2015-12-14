@@ -3,6 +3,7 @@ package textTest;
 import neuralNet.Agent;
 import neuralNet.EvolutionSimulation;
 import neuralNet.EvolvingNeuralNet;
+import neuralNet.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,5 +33,14 @@ public class TextEvolver extends EvolutionSimulation {
     @Override
     public Agent generateAgent() throws EvolvingNeuralNet.NotEnoughLayersException {
         return new TextAgent();
+    }
+
+    public void generateTest() {
+        String test = "";
+        for (int i = 0; i < TextAgent.NEURAL_OUTPUTS; i++) {
+            char c = (char) (Util.random.nextDouble()*26 + 65);
+            test += c;
+        }
+        TextAgent.TEST_STRING = test;
     }
 }
