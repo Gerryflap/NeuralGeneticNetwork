@@ -40,7 +40,7 @@ public class CarAgent extends Agent {
 
         MUTATION_CHANCE = 0.9;
 
-        MEMORY_NEURONS = 10;
+        MEMORY_NEURONS = 1;
     }
 
     @Override
@@ -69,7 +69,7 @@ public class CarAgent extends Agent {
 
             x += Math.cos(rotation) * speed;
             y += Math.sin(rotation) * speed;
-            damage -= 0.7 * speed;
+            damage -= 3.0 * speed;
             damage += Math.abs(oldRotation - rotation) < 0.1?1:0;
         } catch (Util.DimensionMismatchException e) {
             e.printStackTrace();

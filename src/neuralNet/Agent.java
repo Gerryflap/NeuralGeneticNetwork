@@ -7,6 +7,7 @@ import java.io.*;
  */
 public abstract class Agent implements Comparable, Serializable{
 
+    public static double BASE_MULTIPLIER = 0;
     protected EvolvingNeuralNet neuralNet;
     public static double MUTATION_CHANCE = 0.5;
     public static int NEURAL_INPUTS = 1;
@@ -46,7 +47,7 @@ public abstract class Agent implements Comparable, Serializable{
     }
 
     public void mutate(double chanceMultiplier) {
-        neuralNet.mutate(MUTATION_CHANCE, chanceMultiplier);
+        neuralNet.mutate(MUTATION_CHANCE, chanceMultiplier + BASE_MULTIPLIER);
     }
     /**
      * Calculate the fitness.
