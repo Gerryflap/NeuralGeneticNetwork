@@ -91,7 +91,7 @@ public class TicTacToeGame {
         for (int i = 0; i < agents.size(); i++) {
             TicTacToeAgent  agent1 = (TicTacToeAgent) agents.get(i);
 
-            //**
+            /**
             for (int j = 0; j < 5; j++) {
                 TicTacToeAgent agent2 = (TicTacToeAgent) agents.get(Util.random.nextInt(agents.size()));
                 int winner = playGame(agent1, agent2);
@@ -135,12 +135,6 @@ public class TicTacToeGame {
             }
             //*/
 
-            int a = agent1.makeMove(new Board(new int[]{2,1,0,0,1,0,0,0,0}, 2));
-            if (a == 7) {
-                agent1.hasWon();
-            } else {
-                agent1.lostFromPlayer();
-            }
 
         }
         return (int) simulator.getFittestAgent().getFitness();

@@ -136,7 +136,7 @@ public abstract class EvolutionSimulation implements Serializable {
             System.out.println(survivorList);
         }
         Agent fittest = getFittestAgent();
-        for (int i = 0; i < population -1; i++) {
+        for (int i = 0; i < population -2; i++) {
             Agent p1 = getAgentByChances(survivorList);
             Agent p2 = getAgentByChances(survivorList);
             Agent newAgent = generateAgent(p1, p2);
@@ -145,7 +145,7 @@ public abstract class EvolutionSimulation implements Serializable {
         }
         fittest.resetFitness();
         newAgents.add(fittest);
-        //newAgents.add(generateAgent());
+        newAgents.add(generateAgent());
         //newAgents.add(generateAgent());
         return newAgents;
     }

@@ -9,7 +9,7 @@ import neuralNet.Util;
  */
 public class TicTacToeAgent extends Agent {
     int winLossSum = 0;
-    int totalErrors = 1;
+    int totalErrors = 0;
 
     public TicTacToeAgent() throws EvolvingNeuralNet.NotEnoughLayersException {
         super();
@@ -22,16 +22,17 @@ public class TicTacToeAgent extends Agent {
     @Override
     public void setStaticVars() {
         NEURAL_INPUTS = 18;
-        NEURAL_LAYERS = 4;
+        NEURAL_LAYERS = 6;
         NEURONS_PER_LAYER = 18;
         OUTCOME_MULTIPLIER = 1;
         NEURAL_OUTPUTS = 1;
         MUTATION_CHANCE = 0.2;
+        BASE_MULTIPLIER = 1.0;
     }
 
     @Override
     public double getFitness() {
-        return (Math.signum(winLossSum) * Math.pow(winLossSum, 2) - (Math.pow(1.1, totalErrors) + totalErrors)* 20);
+        return winLossSum ;
     }
 
     @Override
@@ -47,14 +48,14 @@ public class TicTacToeAgent extends Agent {
     public void hasWonPerfect(){winLossSum += 50;}
 
     public void hasLost() {
-        winLossSum -= 2;
+        winLossSum -= 1;
     }
 
     public void madeError() {
         totalErrors += 1;
     }
 
-    public void lostFromPlayer() {winLossSum -= 100;}
+    public void lostFromPlayer() {winLossSum -= 10;}
 
     public int makeMove(Board boardInfo){
         try {
